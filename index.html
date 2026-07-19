@@ -39,4 +39,39 @@ function removeReport(id){if(confirm('Hapus laporan ini?')){reports=reports.filt
 $('#search').oninput=render;$('#statusFilter').onchange=render;
 function downloadCsv(){const heads=['No Laporan','Tanggal','Plant','Shift','Regu','Mulai','Selesai','Durasi','Status Mesin','Area','Sub Area','Equipment','Masalah','Tindakan','Spare Part','Rekomendasi','Status Kejadian','Status Perbaikan','PIC'];let csv=[heads,...reports.map(r=>[r.id,r.date,r.plant,r.shift,r.team,r.start,r.end,r.duration,r.machineStatus,r.area,r.subarea,r.equipment,r.problem,r.action,r.sparepart,r.recommendation,r.incident,r.repair,r.pic])].map(a=>a.map(v=>'"'+String(v||'').replaceAll('"','""')+'"').join(';')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:'text/csv;charset=utf-8'}));a.download='laporan-maintenance-shift-'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href)}
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e});function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Di Chrome/Edge, pilih menu browser lalu “Install app” atau “Tambahkan ke layar utama”.')};if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');render();
-</script></body></html>
+</script><script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Konfigurasi Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M",
+  authDomain: "maintenance-shift-app.firebaseapp.com",
+  projectId: "maintenance-shift-app",
+  storageBucket: "maintenance-shift-app.firebasestorage.app",
+  messagingSenderId: "883647677547",
+  appId: "1:883647677547:web:cac8c4a93ec373f0a21d2e"
+};
+
+// Inisialisasi Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+console.log('Firebase terhubung');
+
+// Membaca data real-time
+const q = query(collection(db, 'laporan'), orderBy('createdAt', 'desc'));
+
+onSnapshot(q, (snapshot) => {
+  console.log('Jumlah laporan:', snapshot.size);
+});
+</script>
+</body></html>
