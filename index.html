@@ -33,7 +33,23 @@ const $=s=>document.querySelector(s),esc=s=>String(s||'').replace(/[&<>"']/g,c=>
 function options(el,items,label){el.innerHTML='<option value="">'+label+'</option>'+items.map(x=>'<option>'+esc(x)+'</option>').join('')};options($('#area'),AREAS,'Pilih area');options($('#subarea'),SUBAREAS,'Pilih sub area');options($('#equipment'),EQUIPMENT,'Pilih equipment');
 function calcDuration(){let a=$('[name=start]').value,b=$('[name=end]').value;if(a&&b){let m=(new Date(b)-new Date(a))/60000;$('#duration').value=m>=0?Math.floor(m/60)+' jam '+Math.floor(m%60)+' menit':'Waktu selesai harus setelah mulai'}}
 $('[name=start]').onchange=calcDuration;$('[name=end]').onchange=calcDuration;
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.tab).classList.add('active');render()});
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+
+    // nonaktifkan semua tab
+     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    // sembunyikan semua panel
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    // aktifkan tab yang diklik
+    btn.classList.add('active');
+    // tampilkan panel sesuai data-tab
+    const target = document.getElementById(btn.dataset.tab);
+    if (target) {
+      target.classList.add('active');
+    }
+    render();
+  });
+});
 $('#reportForm').addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.target),r=Object.fromEntries(f.entries());delete r.photo;delete r.photoAfter;await simpanLaporanFirebase(r);r.id=Date.now();r.createdAt=new Date().toISOString();r.duration=$('#duration').value;const file=f.get('photo');if(file&&file.size){if(file.size>450000){alert('Foto terlalu besar. Pilih foto di bawah 450 KB agar tersimpan di perangkat.');return}r.photo=await new Promise(ok=>{let x=new FileReader();x.onload=()=>ok(x.result);x.readAsDataURL(file)})}else r.photo='';delete r.photo; if(file&&file.size)r.photo=await new Promise(ok=>{let x=new FileReader();x.onload=()=>ok(x.result);x.readAsDataURL(file)});reports.unshift(r);localStorage.setItem('shiftcareReports',JSON.stringify(reports));e.target.reset();$('#duration').value='Otomatis dari waktu mulai/selesai';alert('Laporan tersimpan.');document.querySelector('[data-tab=reports]').click()});
 function render(){const total=laporanData.length, open=laporanData.filter(r=>r.repair!=='Close').stops=laporanData.filter(r=>r.machineStatus==='Stop').length;...} machineStatus==='Stop').length,repeat=reports.filter(r=>r.incident==='Berulang').length;$('#metrics').innerHTML=[['Total laporan',total],['Perlu tindak lanjut',open],['Mesin stop',stops],['Kejadian berulang',repeat]].map(x=>'<div class="card metric"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join('');let urgent=reports.filter(r=>r.repair!=='Close').slice(0,4);$('#attention').innerHTML=urgent.length?urgent.map(r=>'• '+esc(r.area)+' — '+esc(r.equipment)+' ('+esc(r.repair)+')').join('<br>'):'Tidak ada laporan terbuka.';const q=$('#search').value.toLowerCase(),sf=$('#statusFilter').value;let data=reports.filter(r=>!sf||r.repair===sf).filter(r=>JSON.stringify(r).toLowerCase().includes(q));$('#reportRows').innerHTML=data.map(r=>'<tr><td>'+esc(r.date)+'<br><span class="muted">'+esc(r.shift)+' · '+esc(r.team)+'</span></td><td>'+esc(r.area)+'<br><span class="muted">'+esc(r.subarea)+' · '+esc(r.equipment)+'</span></td><td>'+esc(r.problem)+'<br><span class="muted">'+esc(r.action)+'</span></td><td><span class="badge '+(r.repair==='Close'?'close':'open')+'">'+esc(r.repair)+'</span></td><td>'+esc(r.pic)+'</td><td>'+(r.photo?'<img class="photo" src="'+r.photo+'">':'—')+'</td><td><button class="danger" onclick="removeReport('+r.id+')">Hapus</button></td></tr>').join('');$('#empty').style.display=data.length?'none':'block'}
 function removeReport(id){if(confirm('Hapus laporan ini?')){laporanData = laporanData.filter(r => r.id !== id);localStorage.setItem('shiftCareReports', JSON.stringify(laporanData));render();}}
