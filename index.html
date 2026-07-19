@@ -82,8 +82,18 @@ window.simpanLaporanFirebase = async function(data) {
 };    
 // Membaca data real-time
 const q = query(collection(db, 'laporan'), orderBy('createdAt', 'desc'));
+
 onSnapshot(q, (snapshot) => {
-  console.log('Jumlah laporan:', snapshot.size);
+  reports = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+
+  console.log('Jumlah laporan:', reports.length);
+
+  // Simpan cache lokal
+  localStorage.setItem('shiftCareReports', JSON.stringify(reports));
+
+  // Update dashboard & daftar laporan
+  render();
 });
-</script>
-</body></html>
