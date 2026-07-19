@@ -46,11 +46,15 @@ import {
   collection,
   addDoc,
   onSnapshot,
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
   query,
-  orderBy,
-  serverTimestamp
+  orderBy
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 // Konfigurasi Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M",
