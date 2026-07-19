@@ -23,7 +23,8 @@
   </div><div class="actions"><button type="reset" class="secondary">Bersihkan</button><button class="primary" type="submit">Simpan laporan</button></div></form></section>
   <section id="reports" class="panel"><div class="filter"><div><label>Cari laporan</label><input id="search" placeholder="Mesin, area, PIC, masalah..."></div><div><label>Status perbaikan</label><select id="statusFilter"><option value="">Semua status</option><option>Open</option><option>On Progress</option><option>Monitoring</option><option>Lanjut Shift berikutnya</option><option>Close</option></select></div><button class="primary" onclick="downloadCsv()">Unduh CSV</button></div><div class="table-wrap"><table><thead><tr><th>Tanggal / Shift</th><th>Lokasi</th><th>Masalah & tindakan</th><th>Status</th><th>PIC</th><th>Foto</th><th></th></tr></thead><tbody id="reportRows"></tbody></table><div id="empty" class="empty">Belum ada laporan.</div></div></section>
 </main>
-<script>
+  
+<script type="module">
 const AREAS=["Autoclave","Autoside","Autostraping","BM 3","BM 4","Boiler","Chain pusher","Interleave","Main machine","Mixer","Moulder","Pulper","Raw Material","Stripping 1","Stripping 2","Transfer Car","WTP"];
 const SUBAREAS=["AV 2","AV 3","AV 4","AV 5","AV 6","AV1","Bak Vat","BI Tank","Blower Vacuum","Boosterpump","Box Gantry","Box Hasil","Box Interspad","Box Vacuum","BWP","Chain conveyor","Chiller WJ","Compressor","Coneyor Pasir","Conveyor","Conveyor Pasir 1","Conveyor Pasir 2","Conveyor Pasir 3","Conveyor Pasir 4","Cooling tower","CP 1A","CP 25A","CP1","CP10","CP11","CP12","CP13","CP14","CP15","CP16","CP17","CP18","CP19","CP1B","CP2","CP20","CP21","CP22","CP23","CP24A","CP24B","CP25B","CP25C","CP25D","CP2A","CP2B","CP3","CP3A","CP3B","CP4","CP4A","CP4B","CP5","CP6","CP7","CP8","CP9","Cylinder vat","DDT","Debending","Density","Density 1","Density 2","Destacker","Dirty tank","Dust colletor","Feed pump","Feed pump 1","Feed pump 2","Feed Pump 3","Feed pump 4","Feed pump 5","Feed pump 6","Feed tank","Final A","Final B","Final C","Final pulper","Final stacker","Final Stacker 1","Final Stacker 2","Forming Drum","Genset","Hydropulper","Lifter plate","Lifter product","Lifter separator","Main Drive","Oiling","Other","Panel","PDT","PlC Room","Powerpack","Raw Stock","Rc Tank","Rc Tank 1","Rc Tank 2","Refiner 1","Refiner 2","Refiner 3","Return Tank","RO Sistem","Roll Table","Roller Screen 1","Roller Screen 2","Root Blower Semen","Root Blower Silica","Sealing water tank","Silo CACO3","Silo Pasir","Silo Semen","Sludge Day tank","Sludge Tank","SSP Silica","Stack Table","Stier Tank","Storage Main machine","Storage mixer 1","Storage mixer 2","Storage Silica","Transfer car 1","Transfer car 2","Transfer car 3","Transfer car 4","Transfer car 5","Transfer car 6","Vacuum pump 1","Vacuum pump 2","Vacuum pump 3","Vacuum pump 4","Vacuum pump 5","Waste Stuff","Water jet","Watse conveyor 1","Watse conveyor 2","Watse conveyor 3","Watse conveyor 4","Watse conveyor 5","WD 1","WD 2","Weigher CACO3","Weigher pulper","Weigher Silica","Weigher Sludge","Weigher Water","Weigher WH","WWT","Z Tank"];
 const EQUIPMENT=["Actuator valve","Agitator vat","Air Bellow","Air Cylinder","Air Regulator","As drat","Autodrain","Autothicness","Ball valve","Base plate","Baut","Bearing","Bleed down valve","Boardes","Bottom roll","Breaker","Bushing","Canvas brake","Carbon Van","Check valve Kit","Clamp nozle","Clamp pipa","Coil SV","Condensor","Contactor","Conveyor","Cooling fan","Coupling","Coupling propellar","Cover","Crane","Cuuting Peeler","Diagfram","Discplate coupling","E Chain","E.Motor","Elbow pipa","Electrical cylinder","Encoder","End Roll","Exust Fan","Fan","Filter","Flange pipa","Flexibel Rubber Joint","Flexible hose spiral","Floting valve","Flow meter","Frame","Frame lifter","FRL","Fuse","Gear","Gearbox","Gearmotor","Gland cable","Gland packing","Guide roll","Half Union","Head Nozle","Hose Slang","Intensifier WJ","Inverter","Jembatan","Joint BOX","Joy stick","Kabel","Kain felt","Karet coupling","Kran buuterfly valve","Lampu","Level control","Level sensor","Level Stick","Limit Switch","Linear bearing","Load Cell","lock unlock","Lorry","Manifol powerpack","MCB","Membran","Monitor","Nozle","O ring","Oli Hyd","Oriface","Other","Pin","Pinch valve","Pipa","Pipa Hyd","Pipa Steam","Piston","Piston long travel","Plug valve","Positioner valve","Pressure gauge","Proximity sensor","Pulley","Push Bootom","Rantai","Rell","Ring plate","Roda","Roda Brake","Roll","Roll Brush","Roll Drive","Roll Main Drive","Roll Non drive","Roll Polos","Roll spirall","Roller nylon","Sambungan rantai","Saringan","Screw Semen","Scun Kabel","Seal","Selector Switch","Sensor","Servo Drive","Setvo drive","Shaft roda","Shaft roll","Slang Angin","Slang Hyd","Sock union","Sparye Nozle","Spring","Sprocket","Spure Gear","SV","Telescopic","Terminal cable","Track Roda CP","Track roda TC","Turque limiter","v Belt","Vacuum gauge","Vacuum generator","vacuum pad","Vacuum pump interspad","Wire rofe"];
@@ -39,22 +40,18 @@ function removeReport(id){if(confirm('Hapus laporan ini?')){reports=reports.filt
 $('#search').oninput=render;$('#statusFilter').onchange=render;
 function downloadCsv(){const heads=['No Laporan','Tanggal','Plant','Shift','Regu','Mulai','Selesai','Durasi','Status Mesin','Area','Sub Area','Equipment','Masalah','Tindakan','Spare Part','Rekomendasi','Status Kejadian','Status Perbaikan','PIC'];let csv=[heads,...reports.map(r=>[r.id,r.date,r.plant,r.shift,r.team,r.start,r.end,r.duration,r.machineStatus,r.area,r.subarea,r.equipment,r.problem,r.action,r.sparepart,r.recommendation,r.incident,r.repair,r.pic])].map(a=>a.map(v=>'"'+String(v||'').replaceAll('"','""')+'"').join(';')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:'text/csv;charset=utf-8'}));a.download='laporan-maintenance-shift-'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href)}
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e});function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Di Chrome/Edge, pilih menu browser lalu “Install app” atau “Tambahkan ke layar utama”.')};if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');render();
-</script><script type="module">
+</script>
+  <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore,
   collection,
   addDoc,
   onSnapshot,
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  onSnapshot,
-  query,
-  orderBy
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+   query,
+  orderBy,
+  serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 // Konfigurasi Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M",
