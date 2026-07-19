@@ -76,8 +76,8 @@ window.simpanLaporanFirebase = async function(data) {
     });
     alert('Laporan berhasil disimpan ke cloud');
   } catch (err) {
-    console.error('Gagal simpan:', err);
-    alert('Gagal menyimpan laporan');
+  console.error('Gagal simpan:', err);
+  alert('Gagal menyimpan laporan: ' + err.message);
   }
 };    
 // Membaca data real-time
