@@ -37,16 +37,21 @@ document.querySelectorAll('.tab').forEach(btn => {
   btn.addEventListener('click', () => {
 
     // nonaktifkan semua tab
-     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
     // sembunyikan semua panel
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+
     // aktifkan tab yang diklik
     btn.classList.add('active');
+
     // tampilkan panel sesuai data-tab
     const target = document.getElementById(btn.dataset.tab);
+
     if (target) {
       target.classList.add('active');
     }
+
     render();
   });
 });
