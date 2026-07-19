@@ -84,16 +84,17 @@ window.simpanLaporanFirebase = async function(data) {
 const q = query(collection(db, 'laporan'), orderBy('createdAt', 'desc'));
 
 onSnapshot(q, (snapshot) => {
-  reports = snapshot.docs.map(doc => ({
+  laporanData = snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data()
   }));
 
-  console.log('Jumlah laporan:', reports.length);
+  // supaya bisa dicek dari Console
+  window.laporanData = laporanData;
 
-  // Simpan cache lokal
-  localStorage.setItem('shiftCareReports', JSON.stringify(reports));
+  console.log('Jumlah laporan:', laporanData.length);
 
-  // Update dashboard & daftar laporan
+  localStorage.setItem('shiftCareReports', JSON.stringify(laporanData));
+
   render();
 });
