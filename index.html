@@ -78,7 +78,7 @@ window.simpanLaporanFirebase = async function(data) {
   } catch (err) {
   console.error('Gagal simpan:', err);
   alert('Gagal menyimpan laporan: ' + err.message);
-  }
+}
 };    
 // Membaca data real-time
 const q = query(collection(db, 'laporan'), orderBy('createdAt', 'desc'));
