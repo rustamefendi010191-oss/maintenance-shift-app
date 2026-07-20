@@ -1,3 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RB Maintenance Dashboard</title>
+  <style>
+    body{font-family:Arial,sans-serif;background:#f4f6f9;margin:0;padding:20px}
+    .header{background:#0f172a;color:#fff;padding:15px 20px;border-radius:12px;margin-bottom:20px}
+    .card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:20px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+    .metric{font-size:28px;font-weight:bold;color:#2563eb}
+    input,select,textarea,button{width:100%;padding:10px;margin-top:8px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box}
+    button{background:#2563eb;color:#fff;border:none;font-weight:bold;cursor:pointer}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h2>RB Maintenance Dashboard (Realtime)</h2>
+  <div id="status">Menghubungkan Firebase...</div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div>Total Laporan</div>
+    <div id="totalLaporan" class="metric">0</div>
+  </div>
+  <div class="card">
+    <div>Open</div>
+    <div id="openCount" class="metric">0</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Input Downtime</h3>
+  <form id="reportForm">
+    <label>Tanggal</label>
+    <input type="date" id="date" required>
+
+    <label>Plant</label>
+    <select id="plant">
+      <option>RB1</option>
+      <option>RB3</option>
+    </select>
+
+    <label>Shift</label>
+    <select id="shift">
+      <option>A</option>
+      <option>B</option>
+      <option>C</option>
+    </select>
+
+    <label>Area</label>
+    <input id="area" placeholder="Main Machine">
+
+    <label>Equipment</label>
+    <input id="equipment" placeholder="Cylinder">
+
+    <label>Masalah</label>
+    <textarea id="problem" placeholder="Jelaskan masalah"></textarea>
+
+    <label>Status Perbaikan</label>
+    <select id="repair">
+      <option>Open</option>
+      <option>Progress</option>
+      <option>Close</option>
+    </select>
+
+    <label>PIC</label>
+    <input id="pic" placeholder="Rustam">
+
+    <button type="submit">Simpan</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3>Data Laporan</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Tanggal</th>
+        <th>Area</th>
+        <th>Equipment</th>
+        <th>Masalah</th>
+        <th>Status</th>
+        <th>PIC</th>
+      </tr>
+    </thead>
+    <tbody id="reportRows"></tbody>
+  </table>
+</div>
+
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {
@@ -20,76 +115,52 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-console.log('Firebase connected');
+document.getElementById('status').innerHTML =
+  '<span style="color:#22c55e">🟢 Firebase connected</span>';
 
 const form = document.getElementById('reportForm');
-const reportRows = document.getElementById('reportRows');
-const metrics = document.getElementById('metrics');
+const rows = document.getElementById('reportRows');
 
-let laporanData = [];
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-// Simpan data
-if (form) {
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  const data = {
+    date: document.getElementById('date').value,
+    plant: document.getElementById('plant').value,
+    shift: document.getElementById('shift').value,
+    area: document.getElementById('area').value,
+    equipment: document.getElementById('equipment').value,
+    problem: document.getElementById('problem').value,
+    repair: document.getElementById('repair').value,
+    pic: document.getElementById('pic').value,
+    createdAt: serverTimestamp()
+  };
 
-    const data = {
-      date: document.getElementById('date')?.value || '',
-      plant: document.getElementById('plant')?.value || '',
-      shift: document.getElementById('shift')?.value || '',
-      team: document.getElementById('team')?.value || '',
-      area: document.getElementById('area')?.value || '',
-      subarea: document.getElementById('subarea')?.value || '',
-      equipment: document.getElementById('equipment')?.value || '',
-      problem: document.getElementById('problem')?.value || '',
-      action: document.getElementById('action')?.value || '',
-      repair: document.getElementById('repair')?.value || '',
-      machineStatus: document.getElementById('machineStatus')?.value || '',
-      incident: document.getElementById('incident')?.value || '',
-      pic: document.getElementById('pic')?.value || '',
-      createdAt: serverTimestamp()
-    };
+  await addDoc(collection(db, 'laporan'), data);
 
-    try {
-      await addDoc(collection(db, 'laporan'), data);
-      alert('Data berhasil disimpan');
-      form.reset();
-    } catch (err) {
-      console.error(err);
-      alert('Gagal menyimpan data');
-    }
-  });
-}
-
-// Realtime sync
-onSnapshot(collection(db, 'laporan'), (snapshot) => {
-  laporanData = snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
-
-  render();
+  alert('Data berhasil disimpan dan sinkron ke HP & komputer');
+  form.reset();
 });
 
-function render() {
-  if (metrics) {
-    metrics.innerHTML = `
-      <div class="card metric"><span>Total laporan</span><b>${laporanData.length}</b></div>
-      <div class="card metric"><span>Open</span><b>${laporanData.filter(r => r.repair !== 'Close').length}</b></div>
-    `;
-  }
+onSnapshot(collection(db, 'laporan'), (snapshot) => {
+  const data = snapshot.docs.map(doc => doc.data());
 
-  if (reportRows) {
-    reportRows.innerHTML = laporanData.map(r => `
-      <tr>
-        <td>${r.date || ''}</td>
-        <td>${r.area || ''}</td>
-        <td>${r.equipment || ''}</td>
-        <td>${r.problem || ''}</td>
-        <td>${r.repair || ''}</td>
-        <td>${r.pic || ''}</td>
-      </tr>
-    `).join('');
-  }
-}
+  document.getElementById('totalLaporan').textContent = data.length;
+  document.getElementById('openCount').textContent =
+    data.filter(d => d.repair !== 'Close').length;
+
+  rows.innerHTML = data.map(r => `
+    <tr>
+      <td>${r.date || ''}</td>
+      <td>${r.area || ''}</td>
+      <td>${r.equipment || ''}</td>
+      <td>${r.problem || ''}</td>
+      <td>${r.repair || ''}</td>
+      <td>${r.pic || ''}</td>
+    </tr>
+  `).join('');
+});
 </script>
+
+</body>
+</html>
