@@ -8,61 +8,60 @@ import {
   serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-// Firebase config PAK RUSTAM
 const firebaseConfig = {
   apiKey: 'AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M',
   authDomain: 'maintenance-shift-app.firebaseapp.com',
   projectId: 'maintenance-shift-app',
   storageBucket: 'maintenance-shift-app.firebasestorage.app',
   messagingSenderId: '883647677547',
-  appId: '1:883647677547:web:2191e8d1ba7faf7ea21d2e',
-  measurementId: 'G-J4ZVT3LCGV'
+  appId: '1:883647677547:web:2191e8d1ba7faf7ea21d2e'
 };
 
-// Inisialisasi Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 console.log('Firebase connected');
 
-// Form input
 const form = document.getElementById('reportForm');
 const reportRows = document.getElementById('reportRows');
+const metrics = document.getElementById('metrics');
 
 let laporanData = [];
 
-// SIMPAN DATA
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+// Simpan data
+if (form) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-  const data = {
-    date: document.getElementById('date').value,
-    plant: document.getElementById('plant').value,
-    shift: document.getElementById('shift').value,
-    team: document.getElementById('team').value,
-    area: document.getElementById('area').value,
-    subarea: document.getElementById('subarea').value,
-    equipment: document.getElementById('equipment').value,
-    problem: document.getElementById('problem').value,
-    action: document.getElementById('action').value,
-    repair: document.getElementById('repair').value,
-    machineStatus: document.getElementById('machineStatus').value,
-    incident: document.getElementById('incident').value,
-    pic: document.getElementById('pic').value,
-    createdAt: serverTimestamp()
-  };
+    const data = {
+      date: document.getElementById('date')?.value || '',
+      plant: document.getElementById('plant')?.value || '',
+      shift: document.getElementById('shift')?.value || '',
+      team: document.getElementById('team')?.value || '',
+      area: document.getElementById('area')?.value || '',
+      subarea: document.getElementById('subarea')?.value || '',
+      equipment: document.getElementById('equipment')?.value || '',
+      problem: document.getElementById('problem')?.value || '',
+      action: document.getElementById('action')?.value || '',
+      repair: document.getElementById('repair')?.value || '',
+      machineStatus: document.getElementById('machineStatus')?.value || '',
+      incident: document.getElementById('incident')?.value || '',
+      pic: document.getElementById('pic')?.value || '',
+      createdAt: serverTimestamp()
+    };
 
-  try {
-    await addDoc(collection(db, 'laporan'), data);
-    alert('Data berhasil disimpan dan sinkron ke semua perangkat');
-    form.reset();
-  } catch (err) {
-    console.error(err);
-    alert('Gagal menyimpan data');
-  }
-});
+    try {
+      await addDoc(collection(db, 'laporan'), data);
+      alert('Data berhasil disimpan');
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      alert('Gagal menyimpan data');
+    }
+  });
+}
 
-// REALTIME SYNC
+// Realtime sync
 onSnapshot(collection(db, 'laporan'), (snapshot) => {
   laporanData = snapshot.docs.map(doc => ({
     id: doc.id,
@@ -72,61 +71,25 @@ onSnapshot(collection(db, 'laporan'), (snapshot) => {
   render();
 });
 
-// RENDER TABEL & KPI
 function render() {
-  // KPI
-  const total = laporanData.length;
-  const openCount = laporanData.filter(r => r.repair !== 'Close').length;
-  const stopCount = laporanData.filter(r => r.machineStatus === 'Stop').length;
-  const repeatCount = laporanData.filter(r => r.incident === 'Berulang').length;
+  if (metrics) {
+    metrics.innerHTML = `
+      <div class="card metric"><span>Total laporan</span><b>${laporanData.length}</b></div>
+      <div class="card metric"><span>Open</span><b>${laporanData.filter(r => r.repair !== 'Close').length}</b></div>
+    `;
+  }
 
-  document.getElementById('metrics').innerHTML = `
-    <div class="card metric"><span>Total laporan</span><b>${total}</b></div>
-    <div class="card metric"><span>Perlu tindak lanjut</span><b>${openCount}</b></div>
-    <div class="card metric"><span>Mesin stop</span><b>${stopCount}</b></div>
-    <div class="card metric"><span>Kejadian berulang</span><b>${repeatCount}</b></div>
-  `;
-
-  // Tabel
-  reportRows.innerHTML = laporanData.map(r => `
-    <tr>
-      <td>${r.date || ''}</td>
-      <td>${r.area || ''}</td>
-      <td>${r.equipment || ''}</td>
-      <td>${r.problem || ''}</td>
-      <td>${r.repair || ''}</td>
-      <td>${r.pic || ''}</td>
-    </tr>
-  `).join('');
+  if (reportRows) {
+    reportRows.innerHTML = laporanData.map(r => `
+      <tr>
+        <td>${r.date || ''}</td>
+        <td>${r.area || ''}</td>
+        <td>${r.equipment || ''}</td>
+        <td>${r.problem || ''}</td>
+        <td>${r.repair || ''}</td>
+        <td>${r.pic || ''}</td>
+      </tr>
+    `).join('');
+  }
 }
-
-// EXPORT CSV
-window.downloadCsv = function () {
-  const heads = ['Tanggal','Plant','Shift','Regu','Area','Sub Area','Equipment','Masalah','Tindakan','Status','PIC'];
-
-  const rows = laporanData.map(r => [
-    r.date || '',
-    r.plant || '',
-    r.shift || '',
-    r.team || '',
-    r.area || '',
-    r.subarea || '',
-    r.equipment || '',
-    r.problem || '',
-    r.action || '',
-    r.repair || '',
-    r.pic || ''
-  ]);
-
-  const csv = [heads, ...rows]
-    .map(row => row.map(v => `"${String(v).replaceAll('"', '""')}"`).join(';'))
-    .join('\\n');
-
-  const blob = new Blob(["\\ufeff" + csv], { type: 'text/csv;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'laporan-maintenance.csv';
-  a.click();
-  URL.revokeObjectURL(a.href);
-};
 </script>
