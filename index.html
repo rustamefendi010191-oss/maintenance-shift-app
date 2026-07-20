@@ -1,330 +1,260 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RB Maintenance Dashboard</title>
-
   <style>
-    body{
-      font-family:Arial,sans-serif;
-      background:#f4f6f9;
-      margin:0;
-      padding:20px;
-    }
-    .header{
-      background:#0f172a;
-      color:#fff;
-      padding:16px 20px;
-      border-radius:12px;
-      margin-bottom:20px;
-    }
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:16px;
-      margin-bottom:20px;
-    }
-    .card{
-      background:#fff;
-      border-radius:12px;
-      padding:16px;
-      box-shadow:0 2px 8px rgba(0,0,0,.08);
-      margin-bottom:20px;
-    }
-    .metric{
-      font-size:28px;
-      font-weight:bold;
-      color:#2563eb;
-      margin-top:8px;
-    }
-    input,select,textarea,button{
-      width:100%;
-      padding:10px;
-      margin-top:8px;
-      border:1px solid #cbd5e1;
-      border-radius:8px;
-      box-sizing:border-box;
-    }
-    button{
-      background:#2563eb;
-      color:#fff;
-      border:none;
-      font-weight:bold;
-      cursor:pointer;
-    }
-    table{
-      width:100%;
-      border-collapse:collapse;
-      margin-top:10px;
-    }
-    th,td{
-      padding:10px;
-      border-bottom:1px solid #e5e7eb;
-      text-align:left;
-    }
-    .btn-danger{background:#dc2626}
-    .btn-warning{background:#f59e0b}
-    .success{color:#16a34a;font-weight:bold}
+    body{font-family:Arial,sans-serif;background:#eef2f7;margin:0;padding:20px}
+    .header{background:#0f172a;color:#fff;padding:20px;border-radius:14px;margin-bottom:20px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:20px}
+    .card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+    .metric{font-size:34px;font-weight:700;color:#2563eb}
+    label{display:block;margin-top:12px;font-weight:700}
+    input,select,textarea{width:100%;padding:12px;margin-top:6px;border:1px solid #cbd5e1;border-radius:10px;box-sizing:border-box}
+    textarea{min-height:90px}
+    .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    button{padding:12px 18px;border:none;border-radius:10px;font-weight:700;cursor:pointer}
+    #saveBtn{background:#2563eb;color:#fff}
+    .btn-secondary{background:#475569;color:#fff}
+    .btn-danger{background:#dc2626;color:#fff}
+    .btn-warning{background:#f59e0b;color:#fff}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th{background:#0f172a;color:#fff}
+    th,td{padding:12px;border-bottom:1px solid #e5e7eb;text-align:left}
+    .status-badge{padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700}
+    .status-open{background:#fee2e2;color:#b91c1c}
+    .status-progress{background:#fef3c7;color:#92400e}
+    .status-close{background:#dcfce7;color:#166534}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+    .success{color:#16a34a;font-weight:700}
+    @media(max-width:768px){body{padding:12px}.btn-row{flex-direction:column}button{width:100%}table{display:block;overflow-x:auto;white-space:nowrap}}
   </style>
 </head>
-
 <body>
 
-  <div class="header">
-    <h2>RB Maintenance Dashboard (Realtime)</h2>
-    <div id="status">Menghubungkan Firebase...</div>
+<div class="header">
+  <h2>RB Maintenance Dashboard (Realtime)</h2>
+  <div id="status">Menghubungkan Firebase...</div>
+</div>
+
+<div class="grid">
+  <div class="card"><div>Total Laporan</div><div id="totalLaporan" class="metric">0</div></div>
+  <div class="card"><div>Open</div><div id="openCount" class="metric">0</div></div>
+  <div class="card"><div>Close</div><div id="closeCount" class="metric">0</div></div>
+  <div class="card"><div>MTTR (menit)</div><div id="mttr" class="metric">0</div></div>
+</div>
+
+<div class="card">
+  <h3>Input Downtime</h3>
+  <form id="reportForm">
+    <input type="hidden" id="editId">
+
+    <label>Tanggal</label>
+    <input type="date" id="date" required>
+
+    <label>Plant</label>
+    <select id="plant"><option>RB1</option><option>RB3</option></select>
+
+    <label>Shift</label>
+    <select id="shift"><option>A</option><option>B</option><option>C</option></select>
+
+    <label>Area</label>
+    <input id="area" placeholder="Main Machine" required>
+
+    <label>Equipment</label>
+    <input id="equipment" placeholder="Cylinder" required>
+
+    <label>Masalah</label>
+    <textarea id="problem" placeholder="Jelaskan masalah" required></textarea>
+
+    <label>Downtime (menit)</label>
+    <input type="number" id="downtime" value="0" required>
+
+    <label>Status Perbaikan</label>
+    <select id="repair">
+      <option>Open</option>
+      <option>Progress</option>
+      <option>Close</option>
+    </select>
+
+    <label>PIC</label>
+    <input id="pic" placeholder="Rustam" required>
+
+    <div class="btn-row">
+      <button type="submit" id="saveBtn">💾 Simpan Downtime</button>
+      <button type="button" class="btn-secondary" onclick="document.getElementById('reportForm').reset()">Reset Form</button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <div class="toolbar">
+    <h3 style="margin:0">Data Laporan Realtime</h3>
+    <button onclick="downloadCsv()" class="btn-secondary" style="width:auto">📥 Export CSV</button>
   </div>
 
-  <div class="grid">
-    <div class="card">
-      <div>Total Laporan</div>
-      <div id="totalLaporan" class="metric">0</div>
-    </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Tanggal</th>
+        <th>Area</th>
+        <th>Equipment</th>
+        <th>Masalah</th>
+        <th>Downtime</th>
+        <th>Status</th>
+        <th>PIC</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="reportRows"></tbody>
+  </table>
+</div>
 
-    <div class="card">
-      <div>Open</div>
-      <div id="openCount" class="metric">0</div>
-    </div>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, deleteDoc, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-    <div class="card">
-      <div>Close</div>
-      <div id="closeCount" class="metric">0</div>
-    </div>
+const firebaseConfig = {
+  apiKey: 'AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M',
+  authDomain: 'maintenance-shift-app.firebaseapp.com',
+  projectId: 'maintenance-shift-app',
+  storageBucket: 'maintenance-shift-app.firebasestorage.app',
+  messagingSenderId: '883647677547',
+  appId: '1:883647677547:web:2191e8d1ba7faf7ea21d2e'
+};
 
-    <div class="card">
-      <div>MTTR (menit)</div>
-      <div id="mttr" class="metric">0</div>
-    </div>
-  </div>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  <div class="card">
-    <h3>Input Downtime</h3>
+document.getElementById('status').innerHTML =
+  '<span class="success">🟢 Firebase connected (HP & komputer sinkron realtime)</span>';
 
-    <form id="reportForm">
-      <input type="hidden" id="editId">
+const form = document.getElementById('reportForm');
+const rows = document.getElementById('reportRows');
+const editId = document.getElementById('editId');
 
-      <label>Tanggal</label>
-      <input type="date" id="date" required>
+let laporanData = [];
 
-      <label>Plant</label>
-      <select id="plant">
-        <option>RB1</option>
-        <option>RB3</option>
-      </select>
+form.addEventListener('submit', async (e)=>{
+  e.preventDefault();
 
-      <label>Shift</label>
-      <select id="shift">
-        <option>A</option>
-        <option>B</option>
-        <option>C</option>
-      </select>
+  const data = {
+    date: date.value,
+    plant: plant.value,
+    shift: shift.value,
+    area: area.value,
+    equipment: equipment.value,
+    problem: problem.value,
+    downtime: Number(downtime.value || 0),
+    repair: repair.value,
+    pic: pic.value,
+    updatedAt: serverTimestamp()
+  };
 
-      <label>Area</label>
-      <input id="area" placeholder="Main Machine" required>
+  if(editId.value){
+    await updateDoc(doc(db,'laporan',editId.value), data);
+    alert('Data berhasil diupdate');
+  }else{
+    data.createdAt = serverTimestamp();
+    await addDoc(collection(db,'laporan'), data);
+    alert('Data berhasil disimpan');
+  }
 
-      <label>Equipment</label>
-      <input id="equipment" placeholder="Cylinder" required>
+  form.reset();
+  editId.value='';
+  saveBtn.textContent='💾 Simpan Downtime';
+});
 
-      <label>Masalah</label>
-      <textarea id="problem" placeholder="Jelaskan masalah" required></textarea>
+onSnapshot(collection(db,'laporan'), (snapshot)=>{
+  laporanData = snapshot.docs.map(d => ({ id:d.id, ...d.data() }));
+  render();
+});
 
-      <label>Downtime (menit)</label>
-      <input type="number" id="downtime" value="0" required>
+function render(){
+  document.getElementById('totalLaporan').textContent = laporanData.length;
 
-      <label>Status Perbaikan</label>
-      <select id="repair">
-        <option>Open</option>
-        <option>Progress</option>
-        <option>Close</option>
-      </select>
+  const open = laporanData.filter(r=>r.repair !== 'Close').length;
+  const close = laporanData.filter(r=>r.repair === 'Close').length;
+  const totalDowntime = laporanData.reduce((a,b)=>a + Number(b.downtime || 0),0);
+  const mttr = laporanData.length ? (totalDowntime / laporanData.length).toFixed(1) : 0;
 
-      <label>PIC</label>
-      <input id="pic" placeholder="Rustam" required>
+  document.getElementById('openCount').textContent = open;
+  document.getElementById('closeCount').textContent = close;
+  document.getElementById('mttr').textContent = mttr;
 
-      <button type="submit" id="saveBtn">Simpan</button>
-    </form>
-  </div>
+  rows.innerHTML = laporanData.map(r => `
+    <tr>
+      <td>${r.date || ''}</td>
+      <td>${r.area || ''}</td>
+      <td>${r.equipment || ''}</td>
+      <td>${r.problem || ''}</td>
+      <td>${r.downtime || 0}</td>
+      <td>
+        <span class="status-badge ${
+          r.repair === 'Close' ? 'status-close' :
+          r.repair === 'Progress' ? 'status-progress' :
+          'status-open'
+        }">${r.repair || 'Open'}</span>
+      </td>
+      <td>${r.pic || ''}</td>
+      <td>
+        <button class="btn-warning" onclick="editData('${r.id}')" style="width:auto;padding:6px 10px">Edit</button>
+        <button class="btn-danger" onclick="deleteData('${r.id}')" style="width:auto;padding:6px 10px">Hapus</button>
+      </td>
+    </tr>
+  `).join('');
+}
 
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-      <h3>Data Laporan</h3>
-      <button onclick="downloadCsv()" style="width:auto;padding:8px 16px">Export CSV</button>
-    </div>
+window.editData = function(id){
+  const r = laporanData.find(x => x.id === id);
+  if(!r) return;
 
-    <table>
-      <thead>
-        <tr>
-          <th>Tanggal</th>
-          <th>Area</th>
-          <th>Equipment</th>
-          <th>Masalah</th>
-          <th>Downtime</th>
-          <th>Status</th>
-          <th>PIC</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody id="reportRows"></tbody>
-    </table>
-  </div>
+  editId.value = id;
+  date.value = r.date || '';
+  plant.value = r.plant || 'RB1';
+  shift.value = r.shift || 'A';
+  area.value = r.area || '';
+  equipment.value = r.equipment || '';
+  problem.value = r.problem || '';
+  downtime.value = r.downtime || 0;
+  repair.value = r.repair || 'Open';
+  pic.value = r.pic || '';
 
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      onSnapshot,
-      serverTimestamp,
-      deleteDoc,
-      doc,
-      updateDoc
-    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+  saveBtn.textContent = 'Update Data';
+  window.scrollTo({top:0, behavior:'smooth'});
+};
 
-    const firebaseConfig = {
-      apiKey: 'AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M',
-      authDomain: 'maintenance-shift-app.firebaseapp.com',
-      projectId: 'maintenance-shift-app',
-      storageBucket: 'maintenance-shift-app.firebasestorage.app',
-      messagingSenderId: '883647677547',
-      appId: '1:883647677547:web:2191e8d1ba7faf7ea21d2e'
-    };
+window.deleteData = async function(id){
+  if(confirm('Hapus data ini?')){
+    await deleteDoc(doc(db,'laporan',id));
+  }
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+window.downloadCsv = function(){
+  const headers = ['Tanggal','Area','Equipment','Masalah','Downtime','Status','PIC'];
 
-    document.getElementById('status').innerHTML =
-      '<span class="success">🟢 Firebase connected (HP & komputer sinkron realtime)</span>';
+  const csv = [
+    headers.join(';'),
+    ...laporanData.map(r => [
+      r.date || '',
+      r.area || '',
+      r.equipment || '',
+      r.problem || '',
+      r.downtime || 0,
+      r.repair || '',
+      r.pic || ''
+    ].map(v => `"${String(v).replaceAll('"','""')}"`).join(';'))
+  ].join('\\n');
 
-    const form = document.getElementById('reportForm');
-    const rows = document.getElementById('reportRows');
-    const editId = document.getElementById('editId');
-
-    let laporanData = [];
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const data = {
-        date: date.value,
-        plant: plant.value,
-        shift: shift.value,
-        area: area.value,
-        equipment: equipment.value,
-        problem: problem.value,
-        downtime: Number(downtime.value || 0),
-        repair: repair.value,
-        pic: pic.value,
-        updatedAt: serverTimestamp()
-      };
-
-      try {
-        if (editId.value) {
-          await updateDoc(doc(db, 'laporan', editId.value), data);
-          alert('Data berhasil diupdate');
-        } else {
-          data.createdAt = serverTimestamp();
-          await addDoc(collection(db, 'laporan'), data);
-          alert('Data berhasil disimpan');
-        }
-
-        form.reset();
-        editId.value = '';
-        saveBtn.textContent = 'Simpan';
-      } catch (err) {
-        console.error(err);
-        alert('Gagal menyimpan data');
-      }
-    });
-
-    onSnapshot(collection(db, 'laporan'), (snapshot) => {
-      laporanData = snapshot.docs.map(d => ({
-        id: d.id,
-        ...d.data()
-      }));
-
-      render();
-    });
-
-    function render(){
-      document.getElementById('totalLaporan').textContent = laporanData.length;
-
-      const open = laporanData.filter(r => r.repair !== 'Close').length;
-      const close = laporanData.filter(r => r.repair === 'Close').length;
-      const totalDowntime = laporanData.reduce((a,b)=>a + Number(b.downtime || 0),0);
-      const mttr = laporanData.length ? (totalDowntime / laporanData.length).toFixed(1) : 0;
-
-      document.getElementById('openCount').textContent = open;
-      document.getElementById('closeCount').textContent = close;
-      document.getElementById('mttr').textContent = mttr;
-
-      rows.innerHTML = laporanData.map(r => `
-        <tr>
-          <td>${r.date || ''}</td>
-          <td>${r.area || ''}</td>
-          <td>${r.equipment || ''}</td>
-          <td>${r.problem || ''}</td>
-          <td>${r.downtime || 0}</td>
-          <td>${r.repair || ''}</td>
-          <td>${r.pic || ''}</td>
-          <td>
-            <button class="btn-warning" onclick="editData('${r.id}')" style="width:auto;padding:6px 10px;margin-right:6px">Edit</button>
-            <button class="btn-danger" onclick="deleteData('${r.id}')" style="width:auto;padding:6px 10px">Hapus</button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    window.editData = function(id){
-      const r = laporanData.find(x => x.id === id);
-      if(!r) return;
-
-      editId.value = id;
-      date.value = r.date || '';
-      plant.value = r.plant || 'RB1';
-      shift.value = r.shift || 'A';
-      area.value = r.area || '';
-      equipment.value = r.equipment || '';
-      problem.value = r.problem || '';
-      downtime.value = r.downtime || 0;
-      repair.value = r.repair || 'Open';
-      pic.value = r.pic || '';
-
-      saveBtn.textContent = 'Update Data';
-      window.scrollTo({top:0, behavior:'smooth'});
-    };
-
-    window.deleteData = async function(id){
-      if(confirm('Hapus data ini?')){
-        await deleteDoc(doc(db, 'laporan', id));
-      }
-    };
-
-    window.downloadCsv = function(){
-      const headers = ['Tanggal','Area','Equipment','Masalah','Downtime','Status','PIC'];
-
-      const csv = [
-        headers.join(';'),
-        ...laporanData.map(r => [
-          r.date || '',
-          r.area || '',
-          r.equipment || '',
-          r.problem || '',
-          r.downtime || 0,
-          r.repair || '',
-          r.pic || ''
-        ].map(v => `"${String(v).replaceAll('"','""')}"`).join(';'))
-      ].join('\\n');
-
-      const blob = new Blob(["\\ufeff" + csv], {type:'text/csv;charset=utf-8'});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'laporan-maintenance.csv';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    };
-  </script>
+  const blob = new Blob(["\\ufeff" + csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'laporan-maintenance.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+</script>
 
 </body>
 </html>
