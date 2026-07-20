@@ -1,132 +1,262 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="id">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0f4c5c"><link rel="manifest" href="manifest.json">
-  <title>ShiftCare | Laporan Maintenance</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RB Maintenance Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root{--navy:#0f4c5c;--aqua:#14b8a6;--ink:#102a43;--muted:#627d98;--bg:#f1f5f9;--card:#fff;--line:#d9e2ec;--danger:#b42318}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:14px system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}header{background:var(--navy);color:#fff;padding:14px max(18px,calc((100% - 1180px)/2));display:flex;justify-content:space-between;align-items:center;gap:14px}h1{font-size:20px;margin:0}header p{margin:3px 0 0;color:#c9e9e6;font-size:12px}.wrap{max-width:1180px;margin:auto;padding:20px 16px 42px}.tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}.tab,button{border:0;border-radius:9px;padding:10px 14px;font-weight:650;cursor:pointer}.tab{background:#e1e9f0;color:#334e68}.tab.active{background:var(--navy);color:#fff}.panel{display:none}.panel.active{display:block}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.card{background:var(--card);border-radius:12px;padding:17px;box-shadow:0 1px 3px #102a4312}.metric b{display:block;font-size:25px;color:var(--navy);margin-top:5px}.metric span{font-size:12px;color:var(--muted)}.form-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px #102a4312}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}label{display:block;font-size:12px;font-weight:700;margin-bottom:5px;color:#334e68}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px;background:#fff;font:inherit;color:var(--ink)}textarea{min-height:78px;resize:vertical}.full{grid-column:1/-1}.actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}.primary{background:var(--aqua);color:#062e2a}.secondary{background:#e1e9f0;color:#243b53}.danger{color:var(--danger);background:#ffe5e3}.filter{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:14px}.filter>*{min-width:160px;flex:1}.filter button{flex:0 0 auto}.table-wrap{overflow:auto;background:#fff;border-radius:12px;box-shadow:0 1px 3px #102a4312}table{border-collapse:collapse;width:100%;min-width:900px}th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:#486581;background:#f8fafc}td{font-size:13px}.badge{display:inline-block;border-radius:99px;padding:4px 8px;font-size:11px;font-weight:700;background:#e1e9f0}.badge.close{background:#d1fae5;color:#065f46}.badge.open{background:#fef3c7;color:#92400e}.empty{padding:28px;text-align:center;color:var(--muted)}.note{background:#e6fffb;border-left:4px solid var(--aqua);padding:11px 13px;border-radius:6px;margin:0 0 16px;color:#134e4a}.photo{max-width:68px;max-height:50px;border-radius:5px;display:block}.muted{color:var(--muted)}.small{font-size:12px}.brand{display:flex;align-items:center;gap:10px}.mark{width:44px;height:44px;display:grid;place-items:center;background:#fff;border:2px solid #75e6da;border-radius:9px;font-size:10px;font-weight:900;color:var(--navy)}.doc-meta{text-align:right;font-size:11px;color:#c9e9e6;line-height:1.55}.login-screen{position:fixed;inset:0;z-index:20;background:linear-gradient(135deg,#073b4c,#0f4c5c);display:grid;place-items:center;padding:18px}.login-card{width:min(390px,100%);background:#fff;border-radius:15px;padding:28px;box-shadow:0 20px 50px #0005}.login-card h2{margin:0 0 5px}.login-card p{color:var(--muted);margin:0 0 18px}.login-card button{width:100%;margin-top:8px}.user-box{font-size:12px;text-align:right}.user-box span{display:block;color:#c9e9e6;margin-bottom:4px}.logout{padding:6px 9px;font-size:11px;background:#164e63;color:#fff;border:1px solid #5eead4}@media(max-width:760px){header{padding:12px 16px}.wrap{padding:16px 12px}.grid{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.form-card{padding:15px}.actions button{flex:1}.hide-mobile{display:none}.doc-meta{display:none}}@media(max-width:390px){.grid{grid-template-columns:1fr}}
+    body{font-family:Arial,sans-serif;background:#f4f6f9;margin:0}
+    .topbar{background:#0f172a;color:#fff;padding:14px 20px}
+    .container{padding:20px;max-width:1200px;margin:auto}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+    input,select,textarea,button{width:100%;padding:10px;margin-top:8px;border:1px solid #cbd5e1;border-radius:8px}
+    button{background:#2563eb;color:#fff;border:none;font-weight:bold;cursor:pointer}
+    table{width:100%;border-collapse:collapse;background:#fff;margin-top:16px;border-radius:12px;overflow:hidden}
+    th,td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left}
+    .metric{font-size:28px;font-weight:bold;color:#2563eb}
   </style>
 </head>
 <body>
-<header><div class="brand"><div class="mark">RBG</div><div><h1>Aplikasi Sistem</h1><p>Laporan Maintenance Shift</p></div></div><div class="doc-meta">No. Dokumen: <b>FR-MRB-05</b><br>Revisi: 04 · Efektif: 01/04/2021</div><div class="user-box"><span id="currentUser">—</span><button class="logout" onclick="logout()">Keluar</button></div></header>
-<main class="wrap">
-  <nav class="tabs"><button class="tab active" data-tab="dashboard">Dashboard</button><button class="tab" data-tab="input">Input laporan</button><button class="tab" data-tab="reports">Daftar laporan</button></nav>
-  <section id="dashboard" class="panel active"><div class="note">Data disimpan pada perangkat ini. Gunakan <b>Unduh CSV</b> untuk cadangan atau berbagi laporan.</div><div class="grid" id="metrics"></div><div class="card" style="margin-top:16px"><b>Perlu perhatian</b><div id="attention" class="muted small" style="margin-top:8px"></div></div></section>
-  <section id="input" class="panel"><form id="reportForm" class="form-card"><h2 style="margin-top:0">Laporan permasalahan mesin</h2><div class="form-grid">
-    <div><label>Tanggal kejadian *</label><input name="date" type="date" required></div><div><label>Plant *</label><select name="plant" required><option value="">Pilih plant</option><option>RB1</option><option>RB2</option><option>RB3</option></select></div><div><label>Waktu shift *</label><select name="shift" required><option value="">Pilih shift</option><option>Shift 1</option><option>Shift 2</option><option>Shift 3</option></select></div>
-    <div><label>Regu *</label><select name="team" required><option value="">Pilih regu</option><option>Regu 1</option><option>Regu 2</option><option>Regu 3</option><option>Regu 4</option></select></div><div><label>Mulai dikerjakan *</label><input name="start" type="datetime-local" required></div><div><label>Selesai dikerjakan</label><input name="end" type="datetime-local"></div>
-    <div><label>Status mesin *</label><select name="machineStatus" required><option value="">Pilih status</option><option>Stop</option><option>Non Stop</option></select></div><div><label>Area *</label><select name="area" id="area" required></select></div><div><label>Sub area *</label><select name="subarea" id="subarea" required></select></div>
-    <div><label>Equipment *</label><select name="equipment" id="equipment" required></select></div><div><label>Status kejadian *</label><select name="incident" required><option value="">Pilih status</option><option>Berulang</option><option>Tidak berulang</option></select></div><div><label>Status perbaikan *</label><select name="repair" required><option value="">Pilih status</option><option>Open</option><option>On Progress</option><option>Monitoring</option><option>Lanjut Shift berikutnya</option><option>Close</option></select></div>
-    <div><label>PIC eksekusi *</label><input name="pic" placeholder="Nama PIC" required></div><div><label>Foto after perbaikan</label><input name="photo" type="file" accept="image/*"></div><div><label>Durasi</label><input id="duration" value="Otomatis dari waktu mulai/selesai" disabled></div>
-    <div class="full"><label>Abnormality / masalah mesin *</label><textarea name="problem" required placeholder="Jelaskan kondisi atau gangguan yang ditemukan"></textarea></div><div class="full"><label>Tindakan perbaikan *</label><textarea name="action" required placeholder="Tindakan yang sudah dilakukan"></textarea></div><div><label>Spare part diganti</label><input name="sparepart" placeholder="Kosongkan bila tidak ada"></div><div class="full"><label>Rekomendasi</label><textarea name="recommendation" placeholder="Tindak lanjut atau pencegahan yang disarankan"></textarea></div>
-  </div><div class="actions"><button type="reset" class="secondary">Bersihkan</button><button class="primary" type="submit">Simpan laporan</button></div></form></section>
-  <section id="reports" class="panel"><div class="filter"><div><label>Cari laporan</label><input id="search" placeholder="Mesin, area, PIC, masalah..."></div><div><label>Status perbaikan</label><select id="statusFilter"><option value="">Semua status</option><option>Open</option><option>On Progress</option><option>Monitoring</option><option>Lanjut Shift berikutnya</option><option>Close</option></select></div><button class="primary" onclick="downloadCsv()">Unduh CSV</button></div><div class="table-wrap"><table><thead><tr><th>Tanggal / Shift</th><th>Lokasi</th><th>Masalah & tindakan</th><th>Status</th><th>PIC</th><th>Foto</th><th></th></tr></thead><tbody id="reportRows"></tbody></table><div id="empty" class="empty">Belum ada laporan.</div></div></section>
-</main>
+  <div class="topbar">
+    <h2>RB Maintenance Dashboard (Realtime)</h2>
+  </div>
 
-<script>
-const AREAS=["Autoclave","Autoside","Autostraping","BM 3","BM 4","Boiler","Chain pusher","Interleave","Main machine","Mixer","Moulder","Pulper","Raw Material","Stripping 1","Stripping 2","Transfer Car","WTP"];
-const SUBAREAS=["AV 2","AV 3","AV 4","AV 5","AV 6","AV1","Bak Vat","BI Tank","Blower Vacuum","Boosterpump","Box Gantry","Box Hasil","Box Interspad","Box Vacuum","BWP","Chain conveyor","Chiller WJ","Compressor","Coneyor Pasir","Conveyor","Conveyor Pasir 1","Conveyor Pasir 2","Conveyor Pasir 3","Conveyor Pasir 4","Cooling tower","CP 1A","CP 25A","CP1","CP10","CP11","CP12","CP13","CP14","CP15","CP16","CP17","CP18","CP19","CP1B","CP2","CP20","CP21","CP22","CP23","CP24A","CP24B","CP25B","CP25C","CP25D","CP2A","CP2B","CP3","CP3A","CP3B","CP4","CP4A","CP4B","CP5","CP6","CP7","CP8","CP9","Cylinder vat","DDT","Debending","Density","Density 1","Density 2","Destacker","Dirty tank","Dust colletor","Feed pump","Feed pump 1","Feed pump 2","Feed Pump 3","Feed pump 4","Feed pump 5","Feed pump 6","Feed tank","Final A","Final B","Final C","Final pulper","Final stacker","Final Stacker 1","Final Stacker 2","Forming Drum","Genset","Hydropulper","Lifter plate","Lifter product","Lifter separator","Main Drive","Oiling","Other","Panel","PDT","PlC Room","Powerpack","Raw Stock","Rc Tank","Rc Tank 1","Rc Tank 2","Refiner 1","Refiner 2","Refiner 3","Return Tank","RO Sistem","Roll Table","Roller Screen 1","Roller Screen 2","Root Blower Semen","Root Blower Silica","Sealing water tank","Silo CACO3","Silo Pasir","Silo Semen","Sludge Day tank","Sludge Tank","SSP Silica","Stack Table","Stier Tank","Storage Main machine","Storage mixer 1","Storage mixer 2","Storage Silica","Transfer car 1","Transfer car 2","Transfer car 3","Transfer car 4","Transfer car 5","Transfer car 6","Vacuum pump 1","Vacuum pump 2","Vacuum pump 3","Vacuum pump 4","Vacuum pump 5","Waste Stuff","Water jet","Watse conveyor 1","Watse conveyor 2","Watse conveyor 3","Watse conveyor 4","Watse conveyor 5","WD 1","WD 2","Weigher CACO3","Weigher pulper","Weigher Silica","Weigher Sludge","Weigher Water","Weigher WH","WWT","Z Tank"];
-const EQUIPMENT=["Actuator valve","Agitator vat","Air Bellow","Air Cylinder","Air Regulator","As drat","Autodrain","Autothicness","Ball valve","Base plate","Baut","Bearing","Bleed down valve","Boardes","Bottom roll","Breaker","Bushing","Canvas brake","Carbon Van","Check valve Kit","Clamp nozle","Clamp pipa","Coil SV","Condensor","Contactor","Conveyor","Cooling fan","Coupling","Coupling propellar","Cover","Crane","Cuuting Peeler","Diagfram","Discplate coupling","E Chain","E.Motor","Elbow pipa","Electrical cylinder","Encoder","End Roll","Exust Fan","Fan","Filter","Flange pipa","Flexibel Rubber Joint","Flexible hose spiral","Floting valve","Flow meter","Frame","Frame lifter","FRL","Fuse","Gear","Gearbox","Gearmotor","Gland cable","Gland packing","Guide roll","Half Union","Head Nozle","Hose Slang","Intensifier WJ","Inverter","Jembatan","Joint BOX","Joy stick","Kabel","Kain felt","Karet coupling","Kran buuterfly valve","Lampu","Level control","Level sensor","Level Stick","Limit Switch","Linear bearing","Load Cell","lock unlock","Lorry","Manifol powerpack","MCB","Membran","Monitor","Nozle","O ring","Oli Hyd","Oriface","Other","Pin","Pinch valve","Pipa","Pipa Hyd","Pipa Steam","Piston","Piston long travel","Plug valve","Positioner valve","Pressure gauge","Proximity sensor","Pulley","Push Bootom","Rantai","Rell","Ring plate","Roda","Roda Brake","Roll","Roll Brush","Roll Drive","Roll Main Drive","Roll Non drive","Roll Polos","Roll spirall","Roller nylon","Sambungan rantai","Saringan","Screw Semen","Scun Kabel","Seal","Selector Switch","Sensor","Servo Drive","Setvo drive","Shaft roda","Shaft roll","Slang Angin","Slang Hyd","Sock union","Sparye Nozle","Spring","Sprocket","Spure Gear","SV","Telescopic","Terminal cable","Track Roda CP","Track roda TC","Turque limiter","v Belt","Vacuum gauge","Vacuum generator","vacuum pad","Vacuum pump interspad","Wire rofe"];
-let laporanData = JSON.parse(localStorage.getItem('shiftCareReports') || '[]'),deferredPrompt;
-const $=s=>document.querySelector(s),esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function options(el,items,label){el.innerHTML='<option value="">'+label+'</option>'+items.map(x=>'<option>'+esc(x)+'</option>').join('')};options($('#area'),AREAS,'Pilih area');options($('#subarea'),SUBAREAS,'Pilih sub area');options($('#equipment'),EQUIPMENT,'Pilih equipment');
-function calcDuration(){let a=$('[name=start]').value,b=$('[name=end]').value;if(a&&b){let m=(new Date(b)-new Date(a))/60000;$('#duration').value=m>=0?Math.floor(m/60)+' jam '+Math.floor(m%60)+' menit':'Waktu selesai harus setelah mulai'}}
-$('[name=start]').onchange=calcDuration;$('[name=end]').onchange=calcDuration;
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
+  <div class="container">
 
-    // nonaktifkan semua tab
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+```
+<!-- KPI -->
+<div class="grid">
+  <div class="card">
+    <div>Total Downtime</div>
+    <div id="totalDowntime" class="metric">0</div>
+  </div>
+  <div class="card">
+    <div>Total Event</div>
+    <div id="totalEvent" class="metric">0</div>
+  </div>
+  <div class="card">
+    <div>MTTR</div>
+    <div id="mttr" class="metric">0</div>
+  </div>
+  <div class="card">
+    <div>Availability</div>
+    <div id="availability" class="metric">96.3%</div>
+  </div>
+</div>
 
-    // sembunyikan semua panel
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+<!-- FORM INPUT -->
+<div class="card" style="margin-top:20px">
+  <h3>Input Downtime</h3>
+  <form id="form" class="grid">
+    <div>
+      <label>Tanggal</label>
+      <input type="date" id="date" required />
+    </div>
+    <div>
+      <label>Shift</label>
+      <select id="shift">
+        <option>A</option><option>B</option><option>C</option>
+      </select>
+    </div>
+    <div>
+      <label>Plant</label>
+      <select id="plant">
+        <option>RB1</option><option>RB3</option>
+      </select>
+    </div>
+    <div>
+      <label>Area</label>
+      <input id="area" placeholder="Main Machine" />
+    </div>
+    <div>
+      <label>Equipment</label>
+      <input id="equipment" placeholder="Cylinder" />
+    </div>
+    <div>
+      <label>Kategori</label>
+      <select id="category">
+        <option>Mekanik</option>
+        <option>Electric & Control</option>
+        <option>Proses</option>
+        <option>Quality</option>
+      </select>
+    </div>
+    <div>
+      <label>Downtime (menit)</label>
+      <input type="number" id="downtime" required />
+    </div>
+    <div>
+      <label>PIC</label>
+      <input id="pic" placeholder="Rustam" />
+    </div>
+    <div style="grid-column:1/-1">
+      <label>Remark</label>
+      <textarea id="remark" placeholder="Jelaskan penyebab downtime"></textarea>
+    </div>
+    <div style="grid-column:1/-1">
+      <button type="submit">Simpan Downtime</button>
+    </div>
+  </form>
+  <div id="msg"></div>
+</div>
 
-    // aktifkan tab yang diklik
-    btn.classList.add('active');
+<!-- CHART -->
+<div class="card" style="margin-top:20px">
+  <h3>Tren Downtime</h3>
+  <canvas id="trendChart"></canvas>
+</div>
 
-    // tampilkan panel sesuai data-tab
-    const target = document.getElementById(btn.dataset.tab);
+<!-- TABEL -->
+<div class="card" style="margin-top:20px">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <h3>Data Downtime</h3>
+    <button onclick="downloadCsv()" style="width:auto">Export CSV</button>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Tanggal</th>
+        <th>Plant</th>
+        <th>Area</th>
+        <th>Equipment</th>
+        <th>Downtime</th>
+        <th>PIC</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+</div>
+```
 
-    if (target) {
-      target.classList.add('active');
-    }
+  </div>
 
-    render();
-  });
-});
-$('#reportForm').addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.target),r=Object.fromEntries(f.entries());delete r.photo;delete r.photoAfter;await simpanLaporanFirebase(r);r.id=Date.now();r.createdAt=new Date().toISOString();r.duration=$('#duration').value;const file=f.get('photo');if(file&&file.size){if(file.size>450000){alert('Foto terlalu besar. Pilih foto di bawah 450 KB agar tersimpan di perangkat.');return}r.photo=await new Promise(ok=>{let x=new FileReader();x.onload=()=>ok(x.result);x.readAsDataURL(file)})}else r.photo='';delete r.photo; if(file&&file.size)r.photo=await new Promise(ok=>{let x=new FileReader();x.onload=()=>ok(x.result);x.readAsDataURL(file)});reports.unshift(r);localStorage.setItem('shiftcareReports',JSON.stringify(reports));e.target.reset();$('#duration').value='Otomatis dari waktu mulai/selesai';alert('Laporan tersimpan.');document.querySelector('[data-tab=reports]').click()});
-function render(){const total=laporanData.length, open=laporanData.filter(r=>r.repair!=='Close').stops=laporanData.filter(r=>r.machineStatus==='Stop').length;...} machineStatus==='Stop').length,repeat=reports.filter(r=>r.incident==='Berulang').length;$('#metrics').innerHTML=[['Total laporan',total],['Perlu tindak lanjut',open],['Mesin stop',stops],['Kejadian berulang',repeat]].map(x=>'<div class="card metric"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join('');let urgent=reports.filter(r=>r.repair!=='Close').slice(0,4);$('#attention').innerHTML=urgent.length?urgent.map(r=>'• '+esc(r.area)+' — '+esc(r.equipment)+' ('+esc(r.repair)+')').join('<br>'):'Tidak ada laporan terbuka.';const q=$('#search').value.toLowerCase(),sf=$('#statusFilter').value;let data=reports.filter(r=>!sf||r.repair===sf).filter(r=>JSON.stringify(r).toLowerCase().includes(q));$('#reportRows').innerHTML=data.map(r=>'<tr><td>'+esc(r.date)+'<br><span class="muted">'+esc(r.shift)+' · '+esc(r.team)+'</span></td><td>'+esc(r.area)+'<br><span class="muted">'+esc(r.subarea)+' · '+esc(r.equipment)+'</span></td><td>'+esc(r.problem)+'<br><span class="muted">'+esc(r.action)+'</span></td><td><span class="badge '+(r.repair==='Close'?'close':'open')+'">'+esc(r.repair)+'</span></td><td>'+esc(r.pic)+'</td><td>'+(r.photo?'<img class="photo" src="'+r.photo+'">':'—')+'</td><td><button class="danger" onclick="removeReport('+r.id+')">Hapus</button></td></tr>').join('');$('#empty').style.display=data.length?'none':'block'}
-function removeReport(id){if(confirm('Hapus laporan ini?')){laporanData = laporanData.filter(r => r.id !== id);localStorage.setItem('shiftCareReports', JSON.stringify(laporanData));render();}}
-$('#search').oninput=render;$('#statusFilter').onchange=render;
-function downloadCsv(){const heads=['No Laporan','Tanggal','Plant','Shift','Regu','Mulai','Selesai','Durasi','Status Mesin','Area','Sub Area','Equipment','Masalah','Tindakan','Spare Part','Rekomendasi','Status Kejadian','Status Perbaikan','PIC'];let csv=[heads,...reports.map(r=>[r.id,r.date,r.plant,r.shift,r.team,r.start,r.end,r.duration,r.machineStatus,r.area,r.subarea,r.equipment,r.problem,r.action,r.sparepart,r.recommendation,r.incident,r.repair,r.pic])].map(a=>a.map(v=>'"'+String(v||'').replaceAll('"','""')+'"').join(';')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:'text/csv;charset=utf-8'}));a.download='laporan-maintenance-shift-'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href)}
-window.addEventListener('beforeinstallprompt', e=>{e.preventDefault();deferredPrompt = e;
-});function installApp() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt = null;
-  } else {
-    alert('Di Chrome/Edge, pilih menu browser lalu Install app');
-  }
-}
-</script>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  onSnapshot,
-   query,
-  orderBy,
-  serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-// Konfigurasi Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M",
-  authDomain: "maintenance-shift-app.firebaseapp.com",
-  projectId: "maintenance-shift-app",
-  storageBucket: "maintenance-shift-app.firebasestorage.app",
-  messagingSenderId: "883647677547",
-  appId: "1:883647677547:web:cac8c4a93ec373f0a21d2e"
-};
+  <!-- FIREBASE -->
 
-// Inisialisasi Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      onSnapshot,
+      serverTimestamp
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-console.log('Firebase terhubung');
-// Fungsi simpan laporan ke Firestore
-window.simpanLaporanFirebase = async function(data) {
-  try {
-    await addDoc(collection(db, 'laporan'), {
-      ...data,
-      createdAt: serverTimestamp()
+    // GANTI DENGAN KONFIGURASI FIREBASE ANDA
+    const firebaseConfig = {
+      apiKey: 'ISI_API_KEY',
+      authDomain: 'ISI_PROJECT.firebaseapp.com',
+      projectId: 'ISI_PROJECT_ID',
+      storageBucket: 'ISI_PROJECT.appspot.com',
+      messagingSenderId: '123456789',
+      appId: 'ISI_APP_ID'
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById('form');
+    const rows = document.getElementById('rows');
+    const msg = document.getElementById('msg');
+
+    let trendChart;
+
+    // SIMPAN DATA
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        date: date.value,
+        shift: shift.value,
+        plant: plant.value,
+        area: area.value,
+        equipment: equipment.value,
+        category: category.value,
+        downtime: Number(downtime.value),
+        pic: pic.value,
+        remark: remark.value,
+        createdAt: serverTimestamp()
+      };
+
+      try {
+        await addDoc(collection(db, 'reports'), data);
+        msg.innerHTML = '<b style="color:green">Data berhasil disimpan</b>';
+        form.reset();
+      } catch (err) {
+        msg.innerHTML = '<b style="color:red">Gagal menyimpan data</b>';
+        console.error(err);
+      }
     });
-    alert('Laporan berhasil disimpan ke cloud');
-  } catch (err) {
-  console.error('Gagal simpan:', err);
-  alert('Gagal menyimpan laporan: ' + err.message);
-}
-};    
-// Membaca data real-time
-const q = query(collection(db, 'laporan'), orderBy('createdAt', 'desc'));
 
-onSnapshot(q, (snapshot) => {
-  laporanData = snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
+    // REALTIME SYNC
+    onSnapshot(collection(db, 'reports'), (snapshot) => {
+      const data = snapshot.docs.map(d => d.data());
 
-  // supaya bisa dicek dari Console
-  window.laporanData = laporanData;
+      // tabel
+      rows.innerHTML = data.map(r => `
+        <tr>
+          <td>${r.date || ''}</td>
+          <td>${r.plant || ''}</td>
+          <td>${r.area || ''}</td>
+          <td>${r.equipment || ''}</td>
+          <td>${r.downtime || 0}</td>
+          <td>${r.pic || ''}</td>
+        </tr>
+      `).join('');
 
-  console.log('Jumlah laporan:', laporanData.length);
+      // KPI
+      const totalDowntime = data.reduce((a,b)=>a + Number(b.downtime || 0),0);
+      const totalEvent = data.length;
+      const mttr = totalEvent ? (totalDowntime / totalEvent).toFixed(1) : 0;
 
-  localStorage.setItem('shiftCareReports', JSON.stringify(laporanData));
+      totalDowntimeEl.textContent = totalDowntime.toLocaleString() + ' menit';
+      totalEventEl.textContent = totalEvent;
+      mttrEl.textContent = mttr + ' menit';
 
-  render();
-});
-</script>
+      // chart
+      const monthMap = {};
+      data.forEach(r => {
+        const m = (r.date || '').slice(0,7);
+        monthMap[m] = (monthMap[m] || 0) + Number(r.downtime || 0);
+      });
+
+      const labels = Object.keys(monthMap).sort();
+      const values = labels.map(k => monthMap[k]);
+
+      if (trendChart) trendChart.destroy();
+
+      trendChart = new Chart(document.getElementById('trendChart'), {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Downtime',
+            data: values,
+            borderWidth: 2,
+            tension: 0.3
+          }]
+        }
+      });
+    });
+
+    // EXPORT CSV
+    window.downloadCsv = function(){
+      const table = document.querySelector('table');
+      let csv = [];
+      for (const row of table.rows) {
+        csv.push([...row.cells].map(td => `"${td.innerText}"`).join(';'));
+      }
+      const blob = new Blob([csv.join('\\n')], {type:'text/csv;charset=utf-8'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'downtime-report.csv';
+      a.click();
+    }
+  </script>
+
 </body>
 </html>
+
