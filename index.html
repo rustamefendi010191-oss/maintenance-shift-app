@@ -29,16 +29,13 @@ body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#eef2f7;color:#1f
 label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:#334155}
 input,select,textarea{width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;background:#fff}
 textarea{min-height:80px;resize:vertical}
-button{background:#2563eb;color:#fff;border:none;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer}
+button{background:#2563eb;color:#fff;border:none;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer;min-height:48px;touch-action:manipulation}
 button:hover{background:#1d4ed8}
+button:disabled{opacity:.7;cursor:not-allowed}
 .ts-control{min-height:44px;border-radius:10px!important;border:1px solid #cbd5e1!important}
 table{width:100%;border-collapse:collapse;margin-top:12px;background:#fff}
 thead th{background:#0f4c5c;color:#fff;padding:10px;font-size:13px}
 tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
-.badge{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700}
-.open{background:#fee2e2;color:#b91c1c}
-.progress{background:#fef3c7;color:#92400e}
-.close{background:#dcfce7;color:#166534}
 .success{color:#16a34a;font-weight:700;margin-top:10px}
 </style>
 </head>
@@ -81,7 +78,6 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
 
     <form id="f">
       <div class="grid">
-
         <div><label>Tanggal</label><input type="date" id="date" required></div>
 
         <div><label>Plant</label>
@@ -112,21 +108,8 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
           <select id="area" required>
             <option value="">Pilih area</option>
             <option>Autoside</option>
-            <option>Autoclave</option>
-            <option>Autostraping</option>
-            <option>Boiler</option>
-            <option>BM 3</option>
-            <option>BM 4</option>
-            <option>Chain pusher</option>
-            <option>Pulper</option>
-            <option>Interleave</option>
-            <option>Mixer</option>
-            <option>Moulder</option>
             <option>Main machine</option>
-            <option>Raw Material</option>
-            <option>Stripping 1</option>
-            <option>Stripping 2</option>
-            <option>Transfer Car</option>
+            <option>Boiler</option>
             <option>WTP</option>
           </select>
         </div>
@@ -135,29 +118,11 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
 
         <div><label>Equipment</label><select id="eq" required><option value="">Pilih equipment</option></select></div>
 
-        <div><label>Status Mesin</label>
-          <select id="statusMesin" required>
-            <option value="">Pilih status mesin</option>
-            <option>Stop</option>
-            <option>Non Stop</option>
-          </select>
-        </div>
-
-        <div><label>Status Kejadian</label>
-          <select id="statusKejadian" required>
-            <option value="">Pilih status kejadian</option>
-            <option>Berulang</option>
-            <option>Tidak berulang</option>
-          </select>
-        </div>
-
         <div><label>Status Perbaikan</label>
           <select id="status" required>
-            <option value="">Pilih status perbaikan</option>
+            <option value="">Pilih status</option>
             <option>Open</option>
             <option>On Progress</option>
-            <option>Monitoring</option>
-            <option>Lanjut Shift berikutnya</option>
             <option>Close</option>
           </select>
         </div>
@@ -165,7 +130,6 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
         <div><label>PIC</label><input id="pic" required></div>
 
         <div><label>Durasi (menit)</label><input id="dur" readonly></div>
-
       </div>
 
       <div style="margin-top:12px">
@@ -173,14 +137,8 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
         <textarea id="problem" required></textarea>
       </div>
 
-      <div class="grid" style="margin-top:12px">
-        <div><label>Action</label><textarea id="action" placeholder="Tindakan perbaikan yang dilakukan"></textarea></div>
-        <div><label>Spare part diganti</label><input id="sparepart" placeholder="Nama spare part"></div>
-        <div style="grid-column:1/-1"><label>Rekomendasi</label><textarea id="rekomendasi" placeholder="Rekomendasi tindak lanjut"></textarea></div>
-      </div>
-
       <div style="margin-top:14px">
-        <button type="submit">💾 Simpan laporan</button>
+        <button type="submit" id="saveBtn">💾 Simpan Laporan</button>
       </div>
     </form>
 
@@ -222,51 +180,24 @@ const app = initializeApp({
 
 const db = getFirestore(app);
 
-const areaTS = new TomSelect('#area',{create:false,placeholder:'Ketik untuk mencari area...'});
-const subTS  = new TomSelect('#sub',{create:false,placeholder:'Ketik untuk mencari sub area...'});
-const eqTS   = new TomSelect('#eq',{create:false,placeholder:'Ketik untuk mencari equipment...'});
+// TomSelect
+const areaTS = new TomSelect('#area',{create:false,placeholder:'Ketik area...'});
+const subTS  = new TomSelect('#sub',{create:false,placeholder:'Ketik sub area...'});
+const eqTS   = new TomSelect('#eq',{create:false,placeholder:'Ketik equipment...'});
 
+// Mapping
 const subMap = {
   'Autoside':['AV1'],
-  'Autoclave':['AV 2'],
-  'Autostraping':['AV 3'],
+  'Main machine':['CP1','CP10'],
   'Boiler':['AV 4'],
-  'BM 3':['AV 5'],
-  'BM 4':['AV 6'],
-  'Chain pusher':['BI Tank'],
-  'Pulper':['Box Gantry'],
-  'Interleave':['Box Interspad'],
-  'Mixer':['Box Hasil'],
-  'Moulder':['Box Vacuum'],
-  'Main machine':['CP1','CP 1A','CP10','CP11','CP 25A'],
-  'Raw Material':['Bak Vat'],
-  'Stripping 1':['Blower Vacuum'],
-  'Stripping 2':['Boosterpump'],
-  'Transfer Car':['BWP'],
   'WTP':['Clarifier']
 };
 
 const eqMap = {
   'AV1':['Air Cylinder'],
-  'AV 2':['Air Regulator'],
-  'AV 3':['Actuator valve'],
-  'AV 4':['Kran butterfly valve'],
-  'AV 5':['Plug valve'],
-  'AV 6':['Agitator vat'],
-  'BI Tank':['Air Bellow'],
-  'Box Gantry':['Cutting Peeler'],
-  'Box Interspad':['Wire rope'],
-  'Box Hasil':['Spring'],
-  'Box Vacuum':['Ball valve'],
   'CP1':['Bearing','Bottom roll'],
-  'CP 1A':['Breaker','Bushing'],
-  'CP10':['Canvas brake','Carbon Van'],
-  'CP11':['Check valve Kit','Base plate'],
-  'CP 25A':['Baut','Autodrain'],
-  'Bak Vat':['Bleed down valve'],
-  'Blower Vacuum':['Autothicness'],
-  'Boosterpump':['Boardes'],
-  'BWP':['As drat'],
+  'CP10':['Canvas brake'],
+  'AV 4':['Kran butterfly valve'],
   'Clarifier':['Check valve Kit']
 };
 
@@ -307,39 +238,105 @@ function calc(){
 s.onchange=calc;
 e.onchange=calc;
 
-// simpan data
-f.addEventListener('submit',async ev=>{
+// ===============================
+// FINAL FIX SIMPAN HP & KOMPUTER
+// ===============================
+const form = document.getElementById('f');
+const saveBtn = document.getElementById('saveBtn');
+
+form.addEventListener('submit', async (ev) => {
   ev.preventDefault();
+  ev.stopPropagation();
 
-  await addDoc(collection(db,'laporan'),{
-    date:date.value,
-    plant:plant.value,
-    shift:shift.value,
-    regu:regu.value,
-    start:s.value,
-    end:e.value,
-    area:areaTS.getValue(),
-    sub:subTS.getValue(),
-    equipment:eqTS.getValue(),
-    statusMesin:statusMesin.value,
-    statusKejadian:statusKejadian.value,
-    status:status.value,
-    pic:pic.value,
-    duration:Number(d.value||0),
-    problem:problem.value,
-    action:action.value,
-    sparepart:sparepart.value,
-    rekomendasi:rekomendasi.value,
-    createdAt:serverTimestamp()
-  });
+  saveBtn.disabled = true;
+  const oldText = saveBtn.innerHTML;
+  saveBtn.innerHTML = '⏳ Menyimpan...';
 
-  alert('Laporan berhasil disimpan');
-  f.reset();
-  subTS.clear();
-  subTS.clearOptions();
-  eqTS.clear();
-  eqTS.clearOptions();
+  try {
+
+    if (!date.value || !plant.value || !shift.value || !regu.value) {
+      alert('⚠️ Tanggal, Plant, Shift, dan Regu wajib diisi.');
+      return;
+    }
+
+    if (!areaTS.getValue() || !subTS.getValue() || !eqTS.getValue()) {
+      alert('⚠️ Area, Sub Area, dan Equipment wajib dipilih.');
+      return;
+    }
+
+    calc();
+
+    await addDoc(collection(db, 'laporan'), {
+      date: date.value,
+      plant: plant.value,
+      shift: shift.value,
+      regu: regu.value,
+      start: s.value,
+      end: e.value,
+      area: areaTS.getValue(),
+      sub: subTS.getValue(),
+      equipment: eqTS.getValue(),
+      status: status.value,
+      pic: pic.value,
+      duration: Number(d.value || 0),
+      problem: problem.value,
+      createdAt: serverTimestamp(),
+      device: /Android|iPhone|iPad/i.test(navigator.userAgent) ? 'HP' : 'Komputer'
+    });
+
+    alert('✅ Laporan berhasil disimpan');
+
+    form.reset();
+
+    areaTS.clear();
+
+    subTS.clear();
+    subTS.clearOptions();
+    Object.values(subMap).flat().forEach(x=>
+      subTS.addOption({value:x,text:x})
+    );
+    subTS.refreshOptions(false);
+
+    eqTS.clear();
+    eqTS.clearOptions();
+    Object.values(eqMap).flat().forEach(x=>
+      eqTS.addOption({value:x,text:x})
+    );
+    eqTS.refreshOptions(false);
+
+    d.value='';
+
+  } catch (err) {
+
+    console.error('ERROR SIMPAN:', err);
+
+    let pesan='❌ Gagal menyimpan data';
+
+    if (err.code === 'permission-denied') {
+      pesan='❌ Firestore ditolak (rules belum benar)';
+    } else if (err.code === 'unavailable') {
+      pesan='❌ Jaringan / internet tidak stabil';
+    } else if (err.message) {
+      pesan='❌ ' + err.message;
+    }
+
+    alert(pesan);
+
+  } finally {
+
+    saveBtn.disabled=false;
+    saveBtn.innerHTML=oldText;
+  }
 });
+
+// support sentuhan Android
+saveBtn.addEventListener('touchstart', () => {
+  saveBtn.style.opacity='0.8';
+}, { passive:true });
+
+saveBtn.addEventListener('touchend', () => {
+  saveBtn.style.opacity='1';
+}, { passive:true });
 
 // realtime table + KPI
 onSnapshot(collection(db,'laporan'),snap=>{
@@ -366,6 +363,8 @@ onSnapshot(collection(db,'laporan'),snap=>{
     ? (data.reduce((a,b)=>a+Number(b.duration||0),0)/data.length).toFixed(1)
     : 0;
 });
+
+console.log('✅ FINAL MOBILE SAVE FIX v307 aktif');
 </script>
 
 </body>
