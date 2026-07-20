@@ -6,23 +6,19 @@
 <title>Aplikasi Sistem - Maintenance Shift</title>
 
 <style>
-*{box-sizing:border-box}
 body{
   margin:0;
-  font-family:'Segoe UI',Arial,sans-serif;
+  font-family:'Segoe UI', Arial, sans-serif;
   background:#eef2f7;
-  color:#1f2937;
 }
 
 .topbar{
   background:#0f4c5c;
-  color:#fff;
+  color:white;
   padding:10px 16px;
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  gap:16px;
-  flex-wrap:wrap;
+  align-items:center;
 }
 
 .brand{
@@ -32,42 +28,15 @@ body{
 }
 
 .logo{
-  width:44px;
-  height:44px;
+  width:42px;
+  height:42px;
   border-radius:10px;
-  background:#fff;
+  background:white;
   color:#0f4c5c;
   font-weight:800;
   display:flex;
   align-items:center;
   justify-content:center;
-}
-
-.brand h1{
-  margin:0;
-  font-size:26px;
-}
-
-.brand p{
-  margin:2px 0 0;
-  font-size:13px;
-  opacity:.9;
-}
-
-.docinfo{
-  text-align:right;
-  font-size:12px;
-  line-height:1.5;
-}
-
-.logout{
-  background:#08313b;
-  color:#fff;
-  border:1px solid rgba(255,255,255,.35);
-  border-radius:10px;
-  padding:10px 14px;
-  font-weight:700;
-  cursor:pointer;
 }
 
 .container{
@@ -78,168 +47,47 @@ body{
   display:flex;
   gap:10px;
   margin-bottom:16px;
-  flex-wrap:wrap;
 }
 
 .tab{
-  background:#cfd8e3;
+  background:#d7dee8;
   border:none;
   border-radius:10px;
   padding:10px 16px;
   font-weight:700;
-  cursor:pointer;
 }
 
 .tab.active{
   background:#0f4c5c;
-  color:#fff;
+  color:white;
 }
 
 .card{
-  background:#fff;
+  background:white;
   border-radius:16px;
   padding:18px;
   box-shadow:0 6px 18px rgba(15,23,42,.08);
 }
 
-.kpi-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:14px;
-  margin-bottom:18px;
-}
-
-.kpi{
-  background:#0f172a;
-  color:#fff;
-  border-radius:14px;
-  padding:16px;
-}
-
-.kpi .label{
-  font-size:13px;
-  opacity:.85;
-}
-
-.kpi .value{
-  font-size:34px;
-  font-weight:800;
-  margin-top:8px;
-}
-
 .form-grid{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-columns:repeat(3,1fr);
   gap:14px;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
 }
 
 .field label{
+  display:block;
   font-size:13px;
   font-weight:700;
   margin-bottom:6px;
-  color:#334155;
 }
 
-input,select,textarea{
+input, select{
   width:100%;
   padding:11px 12px;
   border:1px solid #cbd5e1;
   border-radius:10px;
-  font-size:14px;
-  background:#fff;
-}
-
-textarea{
-  min-height:88px;
-  resize:vertical;
-}
-
-.actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:18px;
-}
-
-.btn{
-  border:none;
-  border-radius:10px;
-  padding:11px 16px;
-  font-weight:700;
-  cursor:pointer;
-}
-
-.btn-primary{background:#2563eb;color:#fff}
-.btn-secondary{background:#475569;color:#fff}
-.btn-danger{background:#dc2626;color:#fff}
-.btn-warning{background:#f59e0b;color:#fff}
-
-.toolbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:10px;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  background:#fff;
-  border-radius:12px;
-  overflow:hidden;
-}
-
-thead th{
-  background:#0f4c5c;
-  color:#fff;
-  padding:12px;
-  font-size:13px;
-}
-
-tbody td{
-  padding:12px;
-  border-bottom:1px solid #e5e7eb;
-  vertical-align:top;
-}
-
-.status{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:6px 10px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:700;
-}
-
-.open{background:#fee2e2;color:#b91c1c}
-.progress{background:#fef3c7;color:#92400e}
-.close{background:#dcfce7;color:#166534}
-
-.hidden{display:none}
-
-.success{
-  color:#16a34a;
-  font-weight:700;
-  margin-top:10px;
-}
-
-@media (max-width: 980px){
-  .form-grid{grid-template-columns:1fr 1fr}
-}
-
-@media (max-width: 640px){
-  .form-grid{grid-template-columns:1fr}
-  .brand h1{font-size:22px}
-  .docinfo{text-align:left}
-  table{display:block;overflow-x:auto;white-space:nowrap}
+  box-sizing:border-box;
 }
 </style>
 </head>
@@ -250,405 +98,111 @@ tbody td{
   <div class="brand">
     <div class="logo">RBG</div>
     <div>
-      <h1>Aplikasi Sistem</h1>
-      <p>Laporan Maintenance Shift</p>
+      <div style="font-size:28px;font-weight:800">Aplikasi Sistem</div>
+      <div style="font-size:13px">Laporan Maintenance Shift</div>
     </div>
   </div>
 
-  <div class="docinfo">
-    <div><strong>No. Dokumen:</strong> FR-MRB-05</div>
-    <div><strong>Revisi:</strong> 04 • Efektif: 01/04/2021</div>
+  <div style="text-align:right;font-size:12px">
+    <div><b>No. Dokumen:</b> FR-MRB-05</div>
+    <div><b>Revisi:</b> 04 • Efektif: 01/04/2021</div>
   </div>
 
-  <button class="logout" onclick="alert('Session logout')">Keluar</button>
+  <button style="background:#08313b;color:white;border:1px solid rgba(255,255,255,.4);border-radius:10px;padding:10px 14px;font-weight:700">
+    Keluar
+  </button>
 </header>
 
 <main class="container">
 
   <div class="tabs">
-    <button class="tab active" data-tab="dashboard">Dashboard</button>
-    <button class="tab" data-tab="input">Input laporan</button>
-    <button class="tab" data-tab="list">Daftar laporan</button>
+    <button class="tab">Dashboard</button>
+    <button class="tab active">Input laporan</button>
+    <button class="tab">Daftar laporan</button>
   </div>
 
-  <section id="dashboard" class="card">
-    <div class="kpi-grid">
-      <div class="kpi"><div class="label">Total laporan</div><div id="kpiTotal" class="value">0</div></div>
-      <div class="kpi"><div class="label">Open</div><div id="kpiOpen" class="value">0</div></div>
-      <div class="kpi"><div class="label">Progress</div><div id="kpiProgress" class="value">0</div></div>
-      <div class="kpi"><div class="label">Close</div><div id="kpiClose" class="value">0</div></div>
-      <div class="kpi"><div class="label">MTTR (menit)</div><div id="kpiMttr" class="value">0</div></div>
+  <section class="card">
+    <h2 style="margin-top:0;color:#0f172a">Laporan permasalahan mesin</h2>
+
+    <div class="form-grid">
+      <div class="field">
+        <label>Tanggal kejadian *</label>
+        <input type="date">
+      </div>
+
+      <div class="field">
+        <label>Plant *</label>
+        <select><option>Pilih plant</option></select>
+      </div>
+
+      <div class="field">
+        <label>Waktu shift *</label>
+        <select><option>Pilih shift</option></select>
+      </div>
+
+      <div class="field">
+        <label>Regu *</label>
+        <select><option>Pilih regu</option></select>
+      </div>
+
+      <div class="field">
+        <label>Mulai dikerjakan *</label>
+        <input type="datetime-local">
+      </div>
+
+      <div class="field">
+        <label>Selesai dikerjakan</label>
+        <input type="datetime-local">
+      </div>
+
+      <div class="field">
+        <label>Status mesin *</label>
+        <select><option>Pilih status</option></select>
+      </div>
+
+      <div class="field">
+        <label>Area *</label>
+        <select><option>Pilih area</option></select>
+      </div>
+
+      <div class="field">
+        <label>Sub area *</label>
+        <select><option>Pilih sub area</option></select>
+      </div>
+
+      <div class="field">
+        <label>Equipment *</label>
+        <select><option>Pilih equipment</option></select>
+      </div>
+
+      <div class="field">
+        <label>Status kejadian *</label>
+        <select><option>Pilih status</option></select>
+      </div>
+
+      <div class="field">
+        <label>Status perbaikan *</label>
+        <select><option>Pilih status</option></select>
+      </div>
+
+      <div class="field">
+        <label>PIC eksekusi *</label>
+        <input placeholder="Nama PIC">
+      </div>
+
+      <div class="field">
+        <label>Foto after perbaikan</label>
+        <input type="file">
+      </div>
+
+      <div class="field">
+        <label>Durasi</label>
+        <input placeholder="Otomatis dari waktu mulai/selesai">
+      </div>
     </div>
-    <div id="syncInfo" class="success">🟢 Firebase connected • HP dan komputer sinkron realtime</div>
-  </section>
-
-  <section id="input" class="card hidden">
-    <h2 style="margin-top:0">Laporan permasalahan mesin</h2>
-
-    <form id="reportForm">
-      <input type="hidden" id="editId">
-
-      <div class="form-grid">
-        <div class="field">
-          <label>Tanggal kejadian *</label>
-          <input type="date" id="date" required>
-        </div>
-
-        <div class="field">
-          <label>Plant *</label>
-          <select id="plant" required>
-            <option value="">Pilih plant</option>
-            <option>RB1</option>
-            <option>RB3</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Waktu shift *</label>
-          <select id="shift" required>
-            <option value="">Pilih shift</option>
-            <option>A</option>
-            <option>B</option>
-            <option>C</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Regu *</label>
-          <select id="regu" required>
-            <option value="">Pilih regu</option>
-            <option>Regu 1</option>
-            <option>Regu 2</option>
-            <option>Regu 3</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Mulai dikerjakan *</label>
-          <input type="datetime-local" id="startTime" required>
-        </div>
-
-        <div class="field">
-          <label>Selesai dikerjakan</label>
-          <input type="datetime-local" id="endTime">
-        </div>
-
-        <div class="field">
-          <label>Status mesin *</label>
-          <select id="machineStatus" required>
-            <option value="">Pilih status</option>
-            <option>Running</option>
-            <option>Stop</option>
-            <option>Breakdown</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Area *</label>
-          <input id="area" placeholder="Pilih area" required>
-        </div>
-
-        <div class="field">
-          <label>Sub area *</label>
-          <input id="subArea" placeholder="Pilih sub area" required>
-        </div>
-
-        <div class="field">
-          <label>Equipment *</label>
-          <input id="equipment" placeholder="Pilih equipment" required>
-        </div>
-
-        <div class="field">
-          <label>Status kejadian *</label>
-          <select id="eventStatus" required>
-            <option value="">Pilih status</option>
-            <option>Minor</option>
-            <option>Major</option>
-            <option>Critical</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Status perbaikan *</label>
-          <select id="repair" required>
-            <option value="">Pilih status</option>
-            <option>Open</option>
-            <option>Progress</option>
-            <option>Close</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>PIC eksekusi *</label>
-          <input id="pic" placeholder="Nama PIC" required>
-        </div>
-
-        <div class="field">
-          <label>Foto after perbaikan</label>
-          <input type="file" id="photo" accept="image/*">
-        </div>
-
-        <div class="field">
-          <label>Durasi (menit)</label>
-          <input type="number" id="duration" placeholder="Otomatis dari waktu mulai/selesai" readonly>
-        </div>
-      </div>
-
-      <div class="field" style="margin-top:14px">
-        <label>Deskripsi masalah *</label>
-        <textarea id="problem" placeholder="Jelaskan masalah, penyebab, dan tindakan perbaikan" required></textarea>
-      </div>
-
-      <div class="actions">
-        <button class="btn btn-primary" type="submit" id="saveBtn">💾 Simpan laporan</button>
-        <button class="btn btn-secondary" type="button" id="resetBtn">Reset form</button>
-      </div>
-    </form>
-  </section>
-
-  <section id="list" class="card hidden">
-    <div class="toolbar">
-      <div>
-        <h2 style="margin:0">Daftar laporan realtime</h2>
-        <div style="color:#64748b;font-size:13px">Data otomatis tersinkron antara HP dan komputer</div>
-      </div>
-      <button class="btn btn-secondary" id="exportBtn">📥 Export CSV</button>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Tanggal</th>
-          <th>Plant</th>
-          <th>Shift</th>
-          <th>Area</th>
-          <th>Equipment</th>
-          <th>Durasi</th>
-          <th>Status</th>
-          <th>PIC</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody id="reportRows"></tbody>
-    </table>
   </section>
 
 </main>
-
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  onSnapshot,
-  serverTimestamp,
-  deleteDoc,
-  doc,
-  updateDoc
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
-const firebaseConfig = {
-  apiKey: 'AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M',
-  authDomain: 'maintenance-shift-app.firebaseapp.com',
-  projectId: 'maintenance-shift-app',
-  storageBucket: 'maintenance-shift-app.firebasestorage.app',
-  messagingSenderId: '883647677547',
-  appId: '1:883647677547:web:2191e8d1ba7faf7ea21d2e'
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const tabs = document.querySelectorAll('.tab');
-const sections = {
-  dashboard: document.getElementById('dashboard'),
-  input: document.getElementById('input'),
-  list: document.getElementById('list')
-};
-
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-
-    Object.values(sections).forEach(s => s.classList.add('hidden'));
-    sections[tab.dataset.tab].classList.remove('hidden');
-  });
-});
-
-const startInput = document.getElementById('startTime');
-const endInput = document.getElementById('endTime');
-const durationInput = document.getElementById('duration');
-
-function updateDuration(){
-  if(startInput.value && endInput.value){
-    const start = new Date(startInput.value);
-    const end = new Date(endInput.value);
-    const minutes = Math.max(0, Math.round((end - start) / 60000));
-    durationInput.value = minutes;
-  }
-}
-
-startInput.addEventListener('change', updateDuration);
-endInput.addEventListener('change', updateDuration);
-
-const form = document.getElementById('reportForm');
-const rows = document.getElementById('reportRows');
-const editId = document.getElementById('editId');
-const saveBtn = document.getElementById('saveBtn');
-const resetBtn = document.getElementById('resetBtn');
-const exportBtn = document.getElementById('exportBtn');
-
-let laporanData = [];
-
-resetBtn.addEventListener('click', () => {
-  form.reset();
-  editId.value = '';
-  durationInput.value = '';
-  saveBtn.textContent = '💾 Simpan laporan';
-});
-
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const data = {
-    date: date.value,
-    plant: plant.value,
-    shift: shift.value,
-    regu: regu.value,
-    startTime: startTime.value,
-    endTime: endTime.value,
-    machineStatus: machineStatus.value,
-    area: area.value,
-    subArea: subArea.value,
-    equipment: equipment.value,
-    eventStatus: eventStatus.value,
-    repair: repair.value,
-    pic: pic.value,
-    duration: Number(duration.value || 0),
-    problem: problem.value,
-    updatedAt: serverTimestamp()
-  };
-
-  if(editId.value){
-    await updateDoc(doc(db,'laporan',editId.value), data);
-    alert('Data berhasil diupdate');
-  }else{
-    data.createdAt = serverTimestamp();
-    await addDoc(collection(db,'laporan'), data);
-    alert('Data berhasil disimpan');
-  }
-
-  form.reset();
-  editId.value = '';
-  durationInput.value = '';
-  saveBtn.textContent = '💾 Simpan laporan';
-});
-
-onSnapshot(collection(db,'laporan'), (snapshot) => {
-  laporanData = snapshot.docs.map(d => ({ id:d.id, ...d.data() }));
-  render();
-});
-
-function render(){
-  const total = laporanData.length;
-  const open = laporanData.filter(r => r.repair === 'Open').length;
-  const progress = laporanData.filter(r => r.repair === 'Progress').length;
-  const close = laporanData.filter(r => r.repair === 'Close').length;
-  const totalDurasi = laporanData.reduce((a,b)=>a + Number(b.duration || 0),0);
-  const mttr = total ? (totalDurasi / total).toFixed(1) : 0;
-
-  kpiTotal.textContent = total;
-  kpiOpen.textContent = open;
-  kpiProgress.textContent = progress;
-  kpiClose.textContent = close;
-  kpiMttr.textContent = mttr;
-
-  rows.innerHTML = laporanData.map(r => `
-    <tr>
-      <td>${r.date || ''}</td>
-      <td>${r.plant || ''}</td>
-      <td>${r.shift || ''}</td>
-      <td>${r.area || ''}</td>
-      <td>${r.equipment || ''}</td>
-      <td>${r.duration || 0} menit</td>
-      <td>
-        <span class="status ${
-          r.repair === 'Close' ? 'close' :
-          r.repair === 'Progress' ? 'progress' : 'open'
-        }">${r.repair || 'Open'}</span>
-      </td>
-      <td>${r.pic || ''}</td>
-      <td>
-        <button class="btn btn-warning" onclick="editData('${r.id}')">Edit</button>
-        <button class="btn btn-danger" onclick="deleteData('${r.id}')">Hapus</button>
-      </td>
-    </tr>
-  `).join('');
-}
-
-window.editData = function(id){
-  const r = laporanData.find(x => x.id === id);
-  if(!r) return;
-
-  editId.value = id;
-  date.value = r.date || '';
-  plant.value = r.plant || '';
-  shift.value = r.shift || '';
-  regu.value = r.regu || '';
-  startTime.value = r.startTime || '';
-  endTime.value = r.endTime || '';
-  machineStatus.value = r.machineStatus || '';
-  area.value = r.area || '';
-  subArea.value = r.subArea || '';
-  equipment.value = r.equipment || '';
-  eventStatus.value = r.eventStatus || '';
-  repair.value = r.repair || '';
-  pic.value = r.pic || '';
-  duration.value = r.duration || 0;
-  problem.value = r.problem || '';
-
-  saveBtn.textContent = 'Update laporan';
-  sections.input.classList.remove('hidden');
-  sections.dashboard.classList.add('hidden');
-  sections.list.classList.add('hidden');
-  tabs.forEach(t => t.classList.remove('active'));
-  document.querySelector('[data-tab="input"]').classList.add('active');
-
-  window.scrollTo({top:0,behavior:'smooth'});
-};
-
-window.deleteData = async function(id){
-  if(confirm('Hapus data ini?')){
-    await deleteDoc(doc(db,'laporan',id));
-  }
-};
-
-exportBtn.addEventListener('click', () => {
-  const headers = ['Tanggal','Plant','Shift','Area','Equipment','Durasi','Status','PIC'];
-  const csv = [
-    headers.join(';'),
-    ...laporanData.map(r => [
-      r.date || '',
-      r.plant || '',
-      r.shift || '',
-      r.area || '',
-      r.equipment || '',
-      r.duration || 0,
-      r.repair || '',
-      r.pic || ''
-    ].map(v => `"${String(v).replaceAll('"','""')}"`).join(';'))
-  ].join('\\n');
-
-  const blob = new Blob(["\\ufeff" + csv], {type:'text/csv;charset=utf-8'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'laporan-maintenance.csv';
-  a.click();
-  URL.revokeObjectURL(a.href);
-});
-</script>
 
 </body>
 </html>
