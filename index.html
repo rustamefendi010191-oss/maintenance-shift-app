@@ -1,97 +1,372 @@
-// ===============================
-// SEARCHABLE DROPDOWN FINAL
-// ===============================
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aplikasi Sistem - Maintenance Shift</title>
 
-const areaTS = new TomSelect('#area',{
-  create:false,
-  placeholder:'Ketik untuk mencari area...',
-  searchField:['text']
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" />
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#eef2f7;color:#1f2937}
+.top{background:#0f4c5c;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo-svg{width:84px;height:84px;background:#fff;border-radius:14px;padding:4px;box-shadow:0 2px 10px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center}
+.logo-svg svg{width:100%;height:100%}
+.brand h1{margin:0;font-size:30px;font-weight:800}
+.brand p{margin:4px 0 0;font-size:14px}
+.doc{font-size:12px;text-align:right}
+.wrap{padding:16px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.k{background:#0b1635;color:#fff;border-radius:14px;padding:14px}
+.k div{font-size:13px;opacity:.9}
+.k b{display:block;font-size:28px;margin-top:6px}
+.card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 6px 18px rgba(15,23,42,.08)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:#334155}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;background:#fff}
+textarea{min-height:80px;resize:vertical}
+button{background:#2563eb;color:#fff;border:none;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer}
+button:hover{background:#1d4ed8}
+.ts-control{min-height:44px;border-radius:10px!important;border:1px solid #cbd5e1!important}
+table{width:100%;border-collapse:collapse;margin-top:12px;background:#fff}
+thead th{background:#0f4c5c;color:#fff;padding:10px;font-size:13px}
+tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
+.badge{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.open{background:#fee2e2;color:#b91c1c}
+.progress{background:#fef3c7;color:#92400e}
+.close{background:#dcfce7;color:#166534}
+.success{color:#16a34a;font-weight:700;margin-top:10px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">
+    <div class="logo-svg">
+      <svg viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="10,35 90,5 170,35" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="35" y1="78" x2="145" y2="78" stroke="#000" stroke-width="6" stroke-linecap="round"/>
+        <text x="28" y="66" font-family="Segoe UI, Arial" font-size="44" font-weight="800" fill="#7b1fa2">R</text>
+        <text x="72" y="66" font-family="Segoe UI, Arial" font-size="44" font-weight="800" fill="#2e7d32">B</text>
+        <text x="116" y="66" font-family="Segoe UI, Arial" font-size="44" font-weight="800" fill="#000">G</text>
+      </svg>
+    </div>
+    <div>
+      <h1>Aplikasi Sistem</h1>
+      <p>Laporan Maintenance Shift</p>
+    </div>
+  </div>
+  <div class="doc">
+    <div><b>No. Dokumen:</b> FR-MRB-05</div>
+    <div><b>Revisi:</b> 04 • Efektif: 01/04/2021</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="kpi">
+    <div class="k"><div>Total</div><b id="t">0</b></div>
+    <div class="k"><div>Open</div><b id="o">0</b></div>
+    <div class="k"><div>Progress</div><b id="p">0</b></div>
+    <div class="k"><div>Close</div><b id="c">0</b></div>
+    <div class="k"><div>MTTR</div><b id="m">0</b></div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-top:0">Laporan permasalahan mesin</h2>
+
+    <form id="f">
+      <div class="grid">
+
+        <div><label>Tanggal</label><input type="date" id="date" required></div>
+
+        <div><label>Plant</label>
+          <select id="plant" required>
+            <option value="">Pilih plant</option>
+            <option>RB1</option><option>RB2</option><option>RB3</option>
+          </select>
+        </div>
+
+        <div><label>Shift</label>
+          <select id="shift" required>
+            <option value="">Pilih shift</option>
+            <option>Shift 1</option><option>Shift 2</option><option>Shift 3</option>
+          </select>
+        </div>
+
+        <div><label>Regu</label>
+          <select id="regu" required>
+            <option value="">Pilih regu</option>
+            <option>Regu 1</option><option>Regu 2</option><option>Regu 3</option><option>Regu 4</option>
+          </select>
+        </div>
+
+        <div><label>Mulai dikerjakan</label><input type="datetime-local" id="start" required></div>
+        <div><label>Selesai dikerjakan</label><input type="datetime-local" id="end"></div>
+
+        <div><label>Area</label>
+          <select id="area" required>
+            <option value="">Pilih area</option>
+            <option>Autoside</option>
+            <option>Autoclave</option>
+            <option>Autostraping</option>
+            <option>Boiler</option>
+            <option>BM 3</option>
+            <option>BM 4</option>
+            <option>Chain pusher</option>
+            <option>Pulper</option>
+            <option>Interleave</option>
+            <option>Mixer</option>
+            <option>Moulder</option>
+            <option>Main machine</option>
+            <option>Raw Material</option>
+            <option>Stripping 1</option>
+            <option>Stripping 2</option>
+            <option>Transfer Car</option>
+            <option>WTP</option>
+          </select>
+        </div>
+
+        <div><label>Sub Area</label><select id="sub" required><option value="">Pilih sub area</option></select></div>
+
+        <div><label>Equipment</label><select id="eq" required><option value="">Pilih equipment</option></select></div>
+
+        <div><label>Status Mesin</label>
+          <select id="statusMesin" required>
+            <option value="">Pilih status mesin</option>
+            <option>Stop</option>
+            <option>Non Stop</option>
+          </select>
+        </div>
+
+        <div><label>Status Kejadian</label>
+          <select id="statusKejadian" required>
+            <option value="">Pilih status kejadian</option>
+            <option>Berulang</option>
+            <option>Tidak berulang</option>
+          </select>
+        </div>
+
+        <div><label>Status Perbaikan</label>
+          <select id="status" required>
+            <option value="">Pilih status perbaikan</option>
+            <option>Open</option>
+            <option>On Progress</option>
+            <option>Monitoring</option>
+            <option>Lanjut Shift berikutnya</option>
+            <option>Close</option>
+          </select>
+        </div>
+
+        <div><label>PIC</label><input id="pic" required></div>
+
+        <div><label>Durasi (menit)</label><input id="dur" readonly></div>
+
+      </div>
+
+      <div style="margin-top:12px">
+        <label>Deskripsi masalah</label>
+        <textarea id="problem" required></textarea>
+      </div>
+
+      <div class="grid" style="margin-top:12px">
+        <div><label>Action</label><textarea id="action" placeholder="Tindakan perbaikan yang dilakukan"></textarea></div>
+        <div><label>Spare part diganti</label><input id="sparepart" placeholder="Nama spare part"></div>
+        <div style="grid-column:1/-1"><label>Rekomendasi</label><textarea id="rekomendasi" placeholder="Rekomendasi tindak lanjut"></textarea></div>
+      </div>
+
+      <div style="margin-top:14px">
+        <button type="submit">💾 Simpan laporan</button>
+      </div>
+    </form>
+
+    <div class="success">🟢 Firebase connected • HP dan komputer sinkron realtime</div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h2 style="margin-top:0">Daftar laporan realtime</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Plant</th>
+          <th>Area</th>
+          <th>Equipment</th>
+          <th>Durasi</th>
+          <th>Status</th>
+          <th>PIC</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const app = initializeApp({
+  apiKey:'AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M',
+  authDomain:'maintenance-shift-app.firebaseapp.com',
+  projectId:'maintenance-shift-app',
+  storageBucket:'maintenance-shift-app.firebasestorage.app',
+  messagingSenderId:'883647677547',
+  appId:'1:883647677547:web:2191e8d1ba7faf7ea21d2e'
 });
 
-const subTS = new TomSelect('#sub',{
-  create:false,
-  placeholder:'Ketik untuk mencari sub area...',
-  searchField:['text']
-});
+const db = getFirestore(app);
 
-const eqTS = new TomSelect('#eq',{
-  create:false,
-  placeholder:'Ketik untuk mencari equipment...',
-  searchField:['text']
-});
+const areaTS = new TomSelect('#area',{create:false,placeholder:'Ketik untuk mencari area...'});
+const subTS  = new TomSelect('#sub',{create:false,placeholder:'Ketik untuk mencari sub area...'});
+const eqTS   = new TomSelect('#eq',{create:false,placeholder:'Ketik untuk mencari equipment...'});
 
-// DATA AREA -> SUB AREA
 const subMap = {
-  'Main Machine':['Chain Pusher','End Roll','Feeding','Stacker'],
-  'Conveyor':['Infeed Conveyor','Outfeed Conveyor','Transfer Conveyor'],
-  'Hydraulic':['Hydraulic Power Unit','Hydraulic Valve','Cylinder Press'],
-  'Pneumatic':['Air Cylinder','Solenoid Valve','FRL Unit'],
-  'Utility':['Air Compressor','Cooling Tower','Water Pump']
+  'Autoside':['AV1'],
+  'Autoclave':['AV 2'],
+  'Autostraping':['AV 3'],
+  'Boiler':['AV 4'],
+  'BM 3':['AV 5'],
+  'BM 4':['AV 6'],
+  'Chain pusher':['BI Tank'],
+  'Pulper':['Box Gantry'],
+  'Interleave':['Box Interspad'],
+  'Mixer':['Box Hasil'],
+  'Moulder':['Box Vacuum'],
+  'Main machine':['CP1','CP 1A','CP10','CP11','CP 25A'],
+  'Raw Material':['Bak Vat'],
+  'Stripping 1':['Blower Vacuum'],
+  'Stripping 2':['Boosterpump'],
+  'Transfer Car':['BWP'],
+  'WTP':['Clarifier']
 };
 
-// DATA SUB AREA -> EQUIPMENT
 const eqMap = {
-  'Chain Pusher':['Chain','Sprocket','Bearing'],
-  'End Roll':['Roll Shaft','Bearing'],
-  'Feeding':['Motor','Gearbox','Sensor'],
-  'Stacker':['Lift Cylinder','Limit Switch'],
-  'Infeed Conveyor':['Conveyor Motor','Roller'],
-  'Outfeed Conveyor':['Conveyor Motor','Roller'],
-  'Transfer Conveyor':['Transfer Motor','Chain','Roller'],
-  'Hydraulic Power Unit':['Pump','Valve','Filter'],
-  'Hydraulic Valve':['Directional Valve','Relief Valve'],
-  'Cylinder Press':['Hydraulic Cylinder','Seal Kit'],
-  'Air Cylinder':['Cylinder','Seal Kit'],
-  'Solenoid Valve':['Valve','Coil'],
-  'FRL Unit':['Filter','Regulator','Lubricator'],
-  'Air Compressor':['Compressor','Pressure Switch'],
-  'Cooling Tower':['Fan Motor','Pump'],
-  'Water Pump':['Pump','Mechanical Seal']
+  'AV1':['Air Cylinder'],
+  'AV 2':['Air Regulator'],
+  'AV 3':['Actuator valve'],
+  'AV 4':['Kran butterfly valve'],
+  'AV 5':['Plug valve'],
+  'AV 6':['Agitator vat'],
+  'BI Tank':['Air Bellow'],
+  'Box Gantry':['Cutting Peeler'],
+  'Box Interspad':['Wire rope'],
+  'Box Hasil':['Spring'],
+  'Box Vacuum':['Ball valve'],
+  'CP1':['Bearing','Bottom roll'],
+  'CP 1A':['Breaker','Bushing'],
+  'CP10':['Canvas brake','Carbon Van'],
+  'CP11':['Check valve Kit','Base plate'],
+  'CP 25A':['Baut','Autodrain'],
+  'Bak Vat':['Bleed down valve'],
+  'Blower Vacuum':['Autothicness'],
+  'Boosterpump':['Boardes'],
+  'BWP':['As drat'],
+  'Clarifier':['Check valve Kit']
 };
 
-// ===============================
-// ISI SEMUA SUB AREA SAAT HALAMAN DIBUKA
-// ===============================
-const allSubAreas = [...new Set(Object.values(subMap).flat())];
-allSubAreas.forEach(x=>subTS.addOption({value:x,text:x}));
+// tampilkan semua sub area saat awal
+Object.values(subMap).flat().forEach(x=>subTS.addOption({value:x,text:x}));
 subTS.refreshOptions(false);
 
-// ===============================
-// ISI SEMUA EQUIPMENT SAAT HALAMAN DIBUKA
-// ===============================
-const allEquipment = [...new Set(Object.values(eqMap).flat())];
-allEquipment.forEach(x=>eqTS.addOption({value:x,text:x}));
+// tampilkan semua equipment saat awal
+Object.values(eqMap).flat().forEach(x=>eqTS.addOption({value:x,text:x}));
 eqTS.refreshOptions(false);
 
-// ===============================
-// SAAT AREA DIPILIH
-// ===============================
-areaTS.on('change', v => {
-
+// filter sub area
+areaTS.on('change',v=>{
   subTS.clear();
   subTS.clearOptions();
-
-  (subMap[v] || []).forEach(x=>
-    subTS.addOption({value:x,text:x})
-  );
-
+  (subMap[v]||[]).forEach(x=>subTS.addOption({value:x,text:x}));
   subTS.refreshOptions(false);
 
   eqTS.clear();
   eqTS.clearOptions();
 });
 
-// ===============================
-// SAAT SUB AREA DIPILIH
-// ===============================
-subTS.on('change', v => {
-
+// filter equipment
+subTS.on('change',v=>{
   eqTS.clear();
   eqTS.clearOptions();
-
-  (eqMap[v] || []).forEach(x=>
-    eqTS.addOption({value:x,text:x})
-  );
-
+  (eqMap[v]||[]).forEach(x=>eqTS.addOption({value:x,text:x}));
   eqTS.refreshOptions(false);
 });
+
+// durasi otomatis
+const s=start,e=end,d=dur;
+function calc(){
+  if(s.value && e.value){
+    d.value=Math.max(0,Math.round((new Date(e.value)-new Date(s.value))/60000));
+  }
+}
+s.onchange=calc;
+e.onchange=calc;
+
+// simpan data
+f.addEventListener('submit',async ev=>{
+  ev.preventDefault();
+
+  await addDoc(collection(db,'laporan'),{
+    date:date.value,
+    plant:plant.value,
+    shift:shift.value,
+    regu:regu.value,
+    start:s.value,
+    end:e.value,
+    area:areaTS.getValue(),
+    sub:subTS.getValue(),
+    equipment:eqTS.getValue(),
+    statusMesin:statusMesin.value,
+    statusKejadian:statusKejadian.value,
+    status:status.value,
+    pic:pic.value,
+    duration:Number(d.value||0),
+    problem:problem.value,
+    action:action.value,
+    sparepart:sparepart.value,
+    rekomendasi:rekomendasi.value,
+    createdAt:serverTimestamp()
+  });
+
+  alert('Laporan berhasil disimpan');
+  f.reset();
+  subTS.clear();
+  subTS.clearOptions();
+  eqTS.clear();
+  eqTS.clearOptions();
+});
+
+// realtime table + KPI
+onSnapshot(collection(db,'laporan'),snap=>{
+  const data=snap.docs.map(x=>x.data());
+
+  rows.innerHTML=data.map(r=>`
+    <tr>
+      <td>${r.date||''}</td>
+      <td>${r.plant||''}</td>
+      <td>${r.area||''}</td>
+      <td>${r.equipment||''}</td>
+      <td>${r.duration||0} menit</td>
+      <td>${r.status||''}</td>
+      <td>${r.pic||''}</td>
+    </tr>
+  `).join('');
+
+  t.textContent=data.length;
+  o.textContent=data.filter(x=>x.status==='Open').length;
+  p.textContent=data.filter(x=>x.status==='On Progress').length;
+  c.textContent=data.filter(x=>x.status==='Close').length;
+
+  m.textContent=data.length
+    ? (data.reduce((a,b)=>a+Number(b.duration||0),0)/data.length).toFixed(1)
+    : 0;
+});
+</script>
+
+</body>
+</html>
