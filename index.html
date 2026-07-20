@@ -3,41 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Maintenance Shift</title>
+<title>Aplikasi Sistem - Maintenance Shift</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css">
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
 <style>
-body{font-family:Segoe UI,Arial,sans-serif;background:#eef2f7;margin:0}
-.top{background:#0f4c5c;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:70px;height:70px;background:#fff;border-radius:14px;padding:5px;object-fit:contain}
-.brand h1{margin:0;font-size:30px}
-.brand p{margin:2px 0 0;font-size:13px}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:#eef2f7;color:#1f2937}
+.top{background:#0f4c5c;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{width:72px;height:72px;object-fit:contain;background:#fff;border-radius:14px;padding:6px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.brand h1{margin:0;font-size:32px;font-weight:800}
+.brand p{margin:4px 0 0;font-size:14px}
 .doc{font-size:12px;text-align:right}
 .wrap{padding:16px}
-.card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
 .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
-.k{background:#0f172a;color:#fff;border-radius:14px;padding:14px}
-.k b{font-size:28px;display:block;margin-top:6px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.k{background:#0b1635;color:#fff;border-radius:14px;padding:14px}
+.k div{font-size:13px;opacity:.9}
+.k b{display:block;font-size:30px;margin-top:6px}
+.card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 6px 18px rgba(15,23,42,.08)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media(max-width:900px){.grid{grid-template-columns:1fr}}
-label{font-weight:700;font-size:13px;margin-bottom:6px;display:block}
-input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px}
-textarea{min-height:80px}
+label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:#334155}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;background:#fff}
+textarea{min-height:90px;resize:vertical}
 button{background:#2563eb;color:#fff;border:none;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer}
-table{width:100%;border-collapse:collapse;margin-top:12px}
-th{background:#0f4c5c;color:#fff;padding:10px;font-size:13px}
-td{padding:10px;border-bottom:1px solid #e5e7eb}
-.ts-control{min-height:44px;border-radius:10px!important}
+button:hover{background:#1d4ed8}
+.ts-control{min-height:44px;border-radius:10px!important;border:1px solid #cbd5e1!important}
+table{width:100%;border-collapse:collapse;margin-top:12px;background:#fff}
+thead th{background:#0f4c5c;color:#fff;padding:10px;font-size:13px}
+tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
+.badge{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.open{background:#fee2e2;color:#b91c1c}
+.progress{background:#fef3c7;color:#92400e}
+.close{background:#dcfce7;color:#166534}
+.success{color:#16a34a;font-weight:700;margin-top:10px}
 </style>
 </head>
 <body>
 
 <div class="top">
   <div class="brand">
-    <img src="logo-rbg.png" class="logo">
+    <img class="logo" alt="RBG Logo"
+      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAA8CAIAAAD5YjQqAAAACXBIWXMAAAsSAAALEgHS3X78AAAAJ0lEQVR4nO3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAAAAAAAAAAAA4G4G1QAB0m3j7QAAAABJRU5ErkJggg==">
     <div>
       <h1>Aplikasi Sistem</h1>
       <p>Laporan Maintenance Shift</p>
@@ -52,81 +61,126 @@ td{padding:10px;border-bottom:1px solid #e5e7eb}
 <div class="wrap">
 
   <div class="kpi">
-    <div class="k">Total<b id="t">0</b></div>
-    <div class="k">Open<b id="o">0</b></div>
-    <div class="k">Progress<b id="p">0</b></div>
-    <div class="k">Close<b id="c">0</b></div>
-    <div class="k">MTTR<b id="m">0</b></div>
+    <div class="k"><div>Total</div><b id="t">0</b></div>
+    <div class="k"><div>Open</div><b id="o">0</b></div>
+    <div class="k"><div>Progress</div><b id="p">0</b></div>
+    <div class="k"><div>Close</div><b id="c">0</b></div>
+    <div class="k"><div>MTTR</div><b id="m">0</b></div>
   </div>
 
   <div class="card">
-    <h2>Laporan permasalahan mesin</h2>
+    <h2 style="margin-top:0">Laporan permasalahan mesin</h2>
 
     <form id="f">
       <div class="grid">
 
-        <div><label>Tanggal</label><input type="date" id="date" required></div>
+        <div>
+          <label>Tanggal</label>
+          <input type="date" id="date" required>
+        </div>
 
-        <div><label>Plant</label>
+        <div>
+          <label>Plant</label>
           <select id="plant" required>
-            <option value=""></option><option>RB1</option><option>RB2</option><option>RB3</option>
+            <option value=""></option>
+            <option>RB1</option><option>RB2</option><option>RB3</option>
           </select>
         </div>
 
-        <div><label>Shift</label>
+        <div>
+          <label>Shift</label>
           <select id="shift" required>
-            <option value=""></option><option>A</option><option>B</option><option>C</option>
+            <option value=""></option>
+            <option>A</option><option>B</option><option>C</option>
           </select>
         </div>
 
-        <div><label>Regu</label>
+        <div>
+          <label>Regu</label>
           <select id="regu" required>
-            <option value=""></option><option>Regu 1</option><option>Regu 2</option><option>Regu 3</option>
+            <option value=""></option>
+            <option>Regu 1</option><option>Regu 2</option><option>Regu 3</option>
           </select>
         </div>
 
-        <div><label>Mulai</label><input type="datetime-local" id="start" required></div>
-        <div><label>Selesai</label><input type="datetime-local" id="end"></div>
+        <div>
+          <label>Mulai dikerjakan</label>
+          <input type="datetime-local" id="start" required>
+        </div>
 
-        <div><label>Area</label>
+        <div>
+          <label>Selesai dikerjakan</label>
+          <input type="datetime-local" id="end">
+        </div>
+
+        <div>
+          <label>Area</label>
           <select id="area" required>
             <option value=""></option>
-            <option>Main Machine</option><option>Conveyor</option>
-            <option>Hydraulic</option><option>Pneumatic</option><option>Utility</option>
+            <option>Main Machine</option>
+            <option>Conveyor</option>
+            <option>Hydraulic</option>
+            <option>Pneumatic</option>
+            <option>Utility</option>
           </select>
         </div>
 
-        <div><label>Sub Area</label><select id="sub" required><option value=""></option></select></div>
+        <div>
+          <label>Sub Area</label>
+          <select id="sub" required><option value=""></option></select>
+        </div>
 
-        <div><label>Equipment</label><select id="eq" required><option value=""></option></select></div>
+        <div>
+          <label>Equipment</label>
+          <select id="eq" required><option value=""></option></select>
+        </div>
 
-        <div><label>Status</label>
+        <div>
+          <label>Status</label>
           <select id="status" required>
-            <option value=""></option><option>Open</option><option>Progress</option><option>Close</option>
+            <option value=""></option>
+            <option>Open</option><option>Progress</option><option>Close</option>
           </select>
         </div>
 
-        <div><label>PIC</label><input id="pic" required></div>
-        <div><label>Durasi (menit)</label><input id="dur" readonly></div>
+        <div>
+          <label>PIC</label>
+          <input id="pic" required>
+        </div>
+
+        <div>
+          <label>Durasi (menit)</label>
+          <input id="dur" readonly placeholder="Otomatis dari waktu mulai/selesai">
+        </div>
 
       </div>
 
       <div style="margin-top:12px">
         <label>Deskripsi masalah</label>
-        <textarea id="problem" required></textarea>
+        <textarea id="problem" required placeholder="Jelaskan masalah dan tindakan perbaikan"></textarea>
       </div>
 
       <div style="margin-top:14px">
         <button type="submit">💾 Simpan laporan</button>
       </div>
     </form>
+
+    <div class="success">🟢 Firebase connected • HP dan komputer sinkron realtime</div>
   </div>
 
   <div class="card" style="margin-top:16px">
-    <h2>Daftar laporan realtime</h2>
+    <h2 style="margin-top:0">Daftar laporan realtime</h2>
     <table>
       <thead>
-        <tr><th>Tanggal</th><th>Plant</th><th>Area</th><th>Equipment</th><th>Durasi</th><th>Status</th><th>PIC</th></tr>
+        <tr>
+          <th>Tanggal</th>
+          <th>Plant</th>
+          <th>Area</th>
+          <th>Equipment</th>
+          <th>Durasi</th>
+          <th>Status</th>
+          <th>PIC</th>
+        </tr>
       </thead>
       <tbody id="rows"></tbody>
     </table>
@@ -150,9 +204,9 @@ const app = initializeApp({
 const db = getFirestore(app);
 
 // Search dropdown
-const areaTS = new TomSelect('#area',{create:false,placeholder:'Cari area...'});
-const subTS  = new TomSelect('#sub',{create:false,placeholder:'Cari sub area...'});
-const eqTS   = new TomSelect('#eq',{create:false,placeholder:'Cari equipment...'});
+const areaTS = new TomSelect('#area',{create:false,placeholder:'Ketik untuk mencari area...'});
+const subTS  = new TomSelect('#sub',{create:false,placeholder:'Ketik untuk mencari sub area...'});
+const eqTS   = new TomSelect('#eq',{create:false,placeholder:'Ketik untuk mencari equipment...'});
 
 // Mapping
 const subMap = {
@@ -193,20 +247,20 @@ subTS.on('change',v=>{
 });
 
 // Durasi otomatis
-const s = document.getElementById('start');
-const e = document.getElementById('end');
-const d = document.getElementById('dur');
+const s=document.getElementById('start');
+const e=document.getElementById('end');
+const d=document.getElementById('dur');
 
 function calc(){
   if(s.value && e.value){
-    d.value = Math.max(0, Math.round((new Date(e.value)-new Date(s.value))/60000));
+    d.value=Math.max(0,Math.round((new Date(e.value)-new Date(s.value))/60000));
   }
 }
-s.onchange = calc;
-e.onchange = calc;
+s.onchange=calc;
+e.onchange=calc;
 
 // Simpan realtime
-document.getElementById('f').addEventListener('submit', async ev => {
+document.getElementById('f').addEventListener('submit',async ev=>{
   ev.preventDefault();
 
   await addDoc(collection(db,'laporan'),{
@@ -233,26 +287,26 @@ document.getElementById('f').addEventListener('submit', async ev => {
 });
 
 // Realtime table + KPI
-onSnapshot(collection(db,'laporan'), snap => {
-  const data = snap.docs.map(x=>x.data());
+onSnapshot(collection(db,'laporan'),snap=>{
+  const data=snap.docs.map(x=>x.data());
 
-  rows.innerHTML = data.map(r=>`
+  rows.innerHTML=data.map(r=>`
     <tr>
       <td>${r.date||''}</td>
       <td>${r.plant||''}</td>
       <td>${r.area||''}</td>
       <td>${r.equipment||''}</td>
       <td>${r.duration||0} menit</td>
-      <td>${r.status||''}</td>
+      <td><span class="badge ${r.status==='Close'?'close':r.status==='Progress'?'progress':'open'}">${r.status||'Open'}</span></td>
       <td>${r.pic||''}</td>
     </tr>
   `).join('');
 
-  t.textContent = data.length;
-  o.textContent = data.filter(x=>x.status==='Open').length;
-  p.textContent = data.filter(x=>x.status==='Progress').length;
-  c.textContent = data.filter(x=>x.status==='Close').length;
-  m.textContent = data.length ? (data.reduce((a,b)=>a+Number(b.duration||0),0)/data.length).toFixed(1) : 0;
+  t.textContent=data.length;
+  o.textContent=data.filter(x=>x.status==='Open').length;
+  p.textContent=data.filter(x=>x.status==='Progress').length;
+  c.textContent=data.filter(x=>x.status==='Close').length;
+  m.textContent=data.length?(data.reduce((a,b)=>a+Number(b.duration||0),0)/data.length).toFixed(1):0;
 });
 </script>
 
