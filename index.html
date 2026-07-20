@@ -1,262 +1,132 @@
-<!DOCTYPE html>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RB Maintenance Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body{font-family:Arial,sans-serif;background:#f4f6f9;margin:0}
-    .topbar{background:#0f172a;color:#fff;padding:14px 20px}
-    .container{padding:20px;max-width:1200px;margin:auto}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-    .card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-    input,select,textarea,button{width:100%;padding:10px;margin-top:8px;border:1px solid #cbd5e1;border-radius:8px}
-    button{background:#2563eb;color:#fff;border:none;font-weight:bold;cursor:pointer}
-    table{width:100%;border-collapse:collapse;background:#fff;margin-top:16px;border-radius:12px;overflow:hidden}
-    th,td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left}
-    .metric{font-size:28px;font-weight:bold;color:#2563eb}
-  </style>
-</head>
-<body>
-  <div class="topbar">
-    <h2>RB Maintenance Dashboard (Realtime)</h2>
-  </div>
+// Firebase config PAK RUSTAM
+const firebaseConfig = {
+  apiKey: 'AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M',
+  authDomain: 'maintenance-shift-app.firebaseapp.com',
+  projectId: 'maintenance-shift-app',
+  storageBucket: 'maintenance-shift-app.firebasestorage.app',
+  messagingSenderId: '883647677547',
+  appId: '1:883647677547:web:2191e8d1ba7faf7ea21d2e',
+  measurementId: 'G-J4ZVT3LCGV'
+};
 
-  <div class="container">
+// Inisialisasi Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-```
-<!-- KPI -->
-<div class="grid">
-  <div class="card">
-    <div>Total Downtime</div>
-    <div id="totalDowntime" class="metric">0</div>
-  </div>
-  <div class="card">
-    <div>Total Event</div>
-    <div id="totalEvent" class="metric">0</div>
-  </div>
-  <div class="card">
-    <div>MTTR</div>
-    <div id="mttr" class="metric">0</div>
-  </div>
-  <div class="card">
-    <div>Availability</div>
-    <div id="availability" class="metric">96.3%</div>
-  </div>
-</div>
+console.log('Firebase connected');
 
-<!-- FORM INPUT -->
-<div class="card" style="margin-top:20px">
-  <h3>Input Downtime</h3>
-  <form id="form" class="grid">
-    <div>
-      <label>Tanggal</label>
-      <input type="date" id="date" required />
-    </div>
-    <div>
-      <label>Shift</label>
-      <select id="shift">
-        <option>A</option><option>B</option><option>C</option>
-      </select>
-    </div>
-    <div>
-      <label>Plant</label>
-      <select id="plant">
-        <option>RB1</option><option>RB3</option>
-      </select>
-    </div>
-    <div>
-      <label>Area</label>
-      <input id="area" placeholder="Main Machine" />
-    </div>
-    <div>
-      <label>Equipment</label>
-      <input id="equipment" placeholder="Cylinder" />
-    </div>
-    <div>
-      <label>Kategori</label>
-      <select id="category">
-        <option>Mekanik</option>
-        <option>Electric & Control</option>
-        <option>Proses</option>
-        <option>Quality</option>
-      </select>
-    </div>
-    <div>
-      <label>Downtime (menit)</label>
-      <input type="number" id="downtime" required />
-    </div>
-    <div>
-      <label>PIC</label>
-      <input id="pic" placeholder="Rustam" />
-    </div>
-    <div style="grid-column:1/-1">
-      <label>Remark</label>
-      <textarea id="remark" placeholder="Jelaskan penyebab downtime"></textarea>
-    </div>
-    <div style="grid-column:1/-1">
-      <button type="submit">Simpan Downtime</button>
-    </div>
-  </form>
-  <div id="msg"></div>
-</div>
+// Form input
+const form = document.getElementById('reportForm');
+const reportRows = document.getElementById('reportRows');
 
-<!-- CHART -->
-<div class="card" style="margin-top:20px">
-  <h3>Tren Downtime</h3>
-  <canvas id="trendChart"></canvas>
-</div>
+let laporanData = [];
 
-<!-- TABEL -->
-<div class="card" style="margin-top:20px">
-  <div style="display:flex;justify-content:space-between;align-items:center">
-    <h3>Data Downtime</h3>
-    <button onclick="downloadCsv()" style="width:auto">Export CSV</button>
-  </div>
-  <table>
-    <thead>
-      <tr>
-        <th>Tanggal</th>
-        <th>Plant</th>
-        <th>Area</th>
-        <th>Equipment</th>
-        <th>Downtime</th>
-        <th>PIC</th>
-      </tr>
-    </thead>
-    <tbody id="rows"></tbody>
-  </table>
-</div>
-```
+// SIMPAN DATA
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-  </div>
+  const data = {
+    date: document.getElementById('date').value,
+    plant: document.getElementById('plant').value,
+    shift: document.getElementById('shift').value,
+    team: document.getElementById('team').value,
+    area: document.getElementById('area').value,
+    subarea: document.getElementById('subarea').value,
+    equipment: document.getElementById('equipment').value,
+    problem: document.getElementById('problem').value,
+    action: document.getElementById('action').value,
+    repair: document.getElementById('repair').value,
+    machineStatus: document.getElementById('machineStatus').value,
+    incident: document.getElementById('incident').value,
+    pic: document.getElementById('pic').value,
+    createdAt: serverTimestamp()
+  };
 
-  <!-- FIREBASE -->
+  try {
+    await addDoc(collection(db, 'laporan'), data);
+    alert('Data berhasil disimpan dan sinkron ke semua perangkat');
+    form.reset();
+  } catch (err) {
+    console.error(err);
+    alert('Gagal menyimpan data');
+  }
+});
 
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      onSnapshot,
-      serverTimestamp
-    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+// REALTIME SYNC
+onSnapshot(collection(db, 'laporan'), (snapshot) => {
+  laporanData = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
 
-    // GANTI DENGAN KONFIGURASI FIREBASE ANDA
-    const firebaseConfig = {
-      apiKey: 'ISI_API_KEY',
-      authDomain: 'ISI_PROJECT.firebaseapp.com',
-      projectId: 'ISI_PROJECT_ID',
-      storageBucket: 'ISI_PROJECT.appspot.com',
-      messagingSenderId: '123456789',
-      appId: 'ISI_APP_ID'
-    };
+  render();
+});
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+// RENDER TABEL & KPI
+function render() {
+  // KPI
+  const total = laporanData.length;
+  const openCount = laporanData.filter(r => r.repair !== 'Close').length;
+  const stopCount = laporanData.filter(r => r.machineStatus === 'Stop').length;
+  const repeatCount = laporanData.filter(r => r.incident === 'Berulang').length;
 
-    const form = document.getElementById('form');
-    const rows = document.getElementById('rows');
-    const msg = document.getElementById('msg');
+  document.getElementById('metrics').innerHTML = `
+    <div class="card metric"><span>Total laporan</span><b>${total}</b></div>
+    <div class="card metric"><span>Perlu tindak lanjut</span><b>${openCount}</b></div>
+    <div class="card metric"><span>Mesin stop</span><b>${stopCount}</b></div>
+    <div class="card metric"><span>Kejadian berulang</span><b>${repeatCount}</b></div>
+  `;
 
-    let trendChart;
+  // Tabel
+  reportRows.innerHTML = laporanData.map(r => `
+    <tr>
+      <td>${r.date || ''}</td>
+      <td>${r.area || ''}</td>
+      <td>${r.equipment || ''}</td>
+      <td>${r.problem || ''}</td>
+      <td>${r.repair || ''}</td>
+      <td>${r.pic || ''}</td>
+    </tr>
+  `).join('');
+}
 
-    // SIMPAN DATA
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+// EXPORT CSV
+window.downloadCsv = function () {
+  const heads = ['Tanggal','Plant','Shift','Regu','Area','Sub Area','Equipment','Masalah','Tindakan','Status','PIC'];
 
-      const data = {
-        date: date.value,
-        shift: shift.value,
-        plant: plant.value,
-        area: area.value,
-        equipment: equipment.value,
-        category: category.value,
-        downtime: Number(downtime.value),
-        pic: pic.value,
-        remark: remark.value,
-        createdAt: serverTimestamp()
-      };
+  const rows = laporanData.map(r => [
+    r.date || '',
+    r.plant || '',
+    r.shift || '',
+    r.team || '',
+    r.area || '',
+    r.subarea || '',
+    r.equipment || '',
+    r.problem || '',
+    r.action || '',
+    r.repair || '',
+    r.pic || ''
+  ]);
 
-      try {
-        await addDoc(collection(db, 'reports'), data);
-        msg.innerHTML = '<b style="color:green">Data berhasil disimpan</b>';
-        form.reset();
-      } catch (err) {
-        msg.innerHTML = '<b style="color:red">Gagal menyimpan data</b>';
-        console.error(err);
-      }
-    });
+  const csv = [heads, ...rows]
+    .map(row => row.map(v => `"${String(v).replaceAll('"', '""')}"`).join(';'))
+    .join('\\n');
 
-    // REALTIME SYNC
-    onSnapshot(collection(db, 'reports'), (snapshot) => {
-      const data = snapshot.docs.map(d => d.data());
-
-      // tabel
-      rows.innerHTML = data.map(r => `
-        <tr>
-          <td>${r.date || ''}</td>
-          <td>${r.plant || ''}</td>
-          <td>${r.area || ''}</td>
-          <td>${r.equipment || ''}</td>
-          <td>${r.downtime || 0}</td>
-          <td>${r.pic || ''}</td>
-        </tr>
-      `).join('');
-
-      // KPI
-      const totalDowntime = data.reduce((a,b)=>a + Number(b.downtime || 0),0);
-      const totalEvent = data.length;
-      const mttr = totalEvent ? (totalDowntime / totalEvent).toFixed(1) : 0;
-
-      totalDowntimeEl.textContent = totalDowntime.toLocaleString() + ' menit';
-      totalEventEl.textContent = totalEvent;
-      mttrEl.textContent = mttr + ' menit';
-
-      // chart
-      const monthMap = {};
-      data.forEach(r => {
-        const m = (r.date || '').slice(0,7);
-        monthMap[m] = (monthMap[m] || 0) + Number(r.downtime || 0);
-      });
-
-      const labels = Object.keys(monthMap).sort();
-      const values = labels.map(k => monthMap[k]);
-
-      if (trendChart) trendChart.destroy();
-
-      trendChart = new Chart(document.getElementById('trendChart'), {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Downtime',
-            data: values,
-            borderWidth: 2,
-            tension: 0.3
-          }]
-        }
-      });
-    });
-
-    // EXPORT CSV
-    window.downloadCsv = function(){
-      const table = document.querySelector('table');
-      let csv = [];
-      for (const row of table.rows) {
-        csv.push([...row.cells].map(td => `"${td.innerText}"`).join(';'));
-      }
-      const blob = new Blob([csv.join('\\n')], {type:'text/csv;charset=utf-8'});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'downtime-report.csv';
-      a.click();
-    }
-  </script>
-
-</body>
-</html>
-
+  const blob = new Blob(["\\ufeff" + csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'laporan-maintenance.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+</script>
