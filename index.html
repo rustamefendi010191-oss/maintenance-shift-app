@@ -1,33 +1,56 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RB Maintenance Dashboard</title>
+
   <style>
     body{
-      font-family:Arial,sans-serif;
+      font-family: Arial, sans-serif;
       background:#f4f6f9;
       margin:0;
       padding:20px;
     }
-    .box{
+
+    .header{
+      background:#0f172a;
+      color:white;
+      padding:16px 20px;
+      border-radius:12px;
+      margin-bottom:20px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:16px;
+      margin-bottom:20px;
+    }
+
+    .card{
       background:white;
       border-radius:12px;
-      padding:20px;
-      box-shadow:0 2px 8px rgba(0,0,0,.1);
-      max-width:900px;
-      margin:auto;
+      padding:16px;
+      box-shadow:0 2px 8px rgba(0,0,0,.08);
     }
-    h1{color:#0f172a}
-    input,button{
+
+    .metric{
+      font-size:28px;
+      font-weight:bold;
+      color:#2563eb;
+      margin-top:8px;
+    }
+
+    input, select, textarea, button{
       width:100%;
-      padding:12px;
-      margin-top:10px;
+      padding:10px;
+      margin-top:8px;
       border:1px solid #cbd5e1;
       border-radius:8px;
       box-sizing:border-box;
     }
+
     button{
       background:#2563eb;
       color:white;
@@ -35,107 +58,170 @@
       font-weight:bold;
       cursor:pointer;
     }
+
     table{
       width:100%;
       border-collapse:collapse;
-      margin-top:20px;
+      margin-top:10px;
     }
-    th,td{
-      border:1px solid #ddd;
+
+    th, td{
       padding:10px;
+      border-bottom:1px solid #e5e7eb;
       text-align:left;
     }
+
+    .success{ color:#16a34a; font-weight:bold; }
   </style>
 </head>
+
 <body>
 
-<div class="box">
-  <h1>RB Maintenance Dashboard</h1>
-  <p id="status">Memuat aplikasi...</p>
+  <div class="header">
+    <h2>RB Maintenance Dashboard (Realtime)</h2>
+    <div id="status">Menghubungkan Firebase...</div>
+  </div>
 
-  <h3>Input Laporan</h3>
-  <form id="reportForm">
-    <input type="date" id="date" required>
-    <input type="text" id="area" placeholder="Area" required>
-    <input type="text" id="equipment" placeholder="Equipment" required>
-    <input type="text" id="problem" placeholder="Masalah" required>
-    <input type="text" id="pic" placeholder="PIC" required>
-    <button type="submit">Simpan</button>
-  </form>
+  <div class="grid">
+    <div class="card">
+      <div>Total Laporan</div>
+      <div id="totalLaporan" class="metric">0</div>
+    </div>
 
-  <h3>Data Laporan</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Tanggal</th>
-        <th>Area</th>
-        <th>Equipment</th>
-        <th>Masalah</th>
-        <th>PIC</th>
-      </tr>
-    </thead>
-    <tbody id="reportRows"></tbody>
-  </table>
-</div>
+    <div class="card">
+      <div>Open</div>
+      <div id="openCount" class="metric">0</div>
+    </div>
+  </div>
 
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  onSnapshot,
-  serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+  <div class="card">
+    <h3>Input Downtime</h3>
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M',
-  authDomain: 'maintenance-shift-app.firebaseapp.com',
-  projectId: 'maintenance-shift-app',
-  storageBucket: 'maintenance-shift-app.firebasestorage.app',
-  messagingSenderId: '883647677547',
-  appId: '1:883647677547:web:2191e8d1ba7faf7ea21d2e'
-};
+    <form id="reportForm">
+      <label>Tanggal</label>
+      <input type="date" id="date" required />
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+      <label>Plant</label>
+      <select id="plant">
+        <option>RB1</option>
+        <option>RB3</option>
+      </select>
 
-document.getElementById('status').innerHTML =
-  '<b style="color:green">🟢 Firebase connected</b>';
+      <label>Area</label>
+      <input id="area" placeholder="Main Machine" required />
 
-const form = document.getElementById('reportForm');
-const rows = document.getElementById('reportRows');
+      <label>Equipment</label>
+      <input id="equipment" placeholder="Cylinder" required />
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+      <label>Masalah</label>
+      <textarea id="problem" placeholder="Jelaskan masalah" required></textarea>
 
-  await addDoc(collection(db, 'laporan'), {
-    date: document.getElementById('date').value,
-    area: document.getElementById('area').value,
-    equipment: document.getElementById('equipment').value,
-    problem: document.getElementById('problem').value,
-    pic: document.getElementById('pic').value,
-    createdAt: serverTimestamp()
-  });
+      <label>Status Perbaikan</label>
+      <select id="repair">
+        <option>Open</option>
+        <option>Progress</option>
+        <option>Close</option>
+      </select>
 
-  alert('Data berhasil disimpan');
-  form.reset();
-});
+      <label>PIC</label>
+      <input id="pic" placeholder="Rustam" required />
 
-onSnapshot(collection(db, 'laporan'), (snapshot) => {
-  const data = snapshot.docs.map(doc => doc.data());
+      <button type="submit">Simpan</button>
+    </form>
+  </div>
 
-  rows.innerHTML = data.map(r => `
-    <tr>
-      <td>${r.date || ''}</td>
-      <td>${r.area || ''}</td>
-      <td>${r.equipment || ''}</td>
-      <td>${r.problem || ''}</td>
-      <td>${r.pic || ''}</td>
-    </tr>
-  `).join('');
-});
-</script>
+  <div class="card">
+    <h3>Data Laporan</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Area</th>
+          <th>Equipment</th>
+          <th>Masalah</th>
+          <th>Status</th>
+          <th>PIC</th>
+        </tr>
+      </thead>
+
+      <tbody id="reportRows"></tbody>
+    </table>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      onSnapshot,
+      serverTimestamp
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: 'AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M',
+      authDomain: 'maintenance-shift-app.firebaseapp.com',
+      projectId: 'maintenance-shift-app',
+      storageBucket: 'maintenance-shift-app.firebasestorage.app',
+      messagingSenderId: '883647677547',
+      appId: '1:883647677547:web:2191e8d1ba7faf7ea21d2e'
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.getElementById('status').innerHTML =
+      '<span class="success">🟢 Firebase connected</span>';
+
+    const form = document.getElementById('reportForm');
+    const rows = document.getElementById('reportRows');
+
+    // SIMPAN DATA
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        date: document.getElementById('date').value,
+        plant: document.getElementById('plant').value,
+        area: document.getElementById('area').value,
+        equipment: document.getElementById('equipment').value,
+        problem: document.getElementById('problem').value,
+        repair: document.getElementById('repair').value,
+        pic: document.getElementById('pic').value,
+        createdAt: serverTimestamp()
+      };
+
+      await addDoc(collection(db, 'laporan'), data);
+
+      alert('Data berhasil disimpan dan sinkron realtime');
+      form.reset();
+    });
+
+    // REALTIME LISTENER
+    onSnapshot(collection(db, 'laporan'), (snapshot) => {
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      document.getElementById('totalLaporan').textContent = data.length;
+
+      document.getElementById('openCount').textContent =
+        data.filter(d => d.repair !== 'Close').length;
+
+      rows.innerHTML = data.map(r => `
+        <tr>
+          <td>${r.date || ''}</td>
+          <td>${r.area || ''}</td>
+          <td>${r.equipment || ''}</td>
+          <td>${r.problem || ''}</td>
+          <td>${r.repair || ''}</td>
+          <td>${r.pic || ''}</td>
+        </tr>
+      `).join('');
+    });
+  </script>
 
 </body>
 </html>
