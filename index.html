@@ -1,48 +1,44 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RB Maintenance Dashboard</title>
 
   <style>
     body{
-      font-family: Arial, sans-serif;
+      font-family:Arial,sans-serif;
       background:#f4f6f9;
       margin:0;
       padding:20px;
     }
-
     .header{
       background:#0f172a;
-      color:white;
+      color:#fff;
       padding:16px 20px;
       border-radius:12px;
       margin-bottom:20px;
     }
-
     .grid{
       display:grid;
       grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
       gap:16px;
       margin-bottom:20px;
     }
-
     .card{
-      background:white;
+      background:#fff;
       border-radius:12px;
       padding:16px;
       box-shadow:0 2px 8px rgba(0,0,0,.08);
+      margin-bottom:20px;
     }
-
     .metric{
       font-size:28px;
       font-weight:bold;
       color:#2563eb;
       margin-top:8px;
     }
-
-    input, select, textarea, button{
+    input,select,textarea,button{
       width:100%;
       padding:10px;
       margin-top:8px;
@@ -50,28 +46,26 @@
       border-radius:8px;
       box-sizing:border-box;
     }
-
     button{
       background:#2563eb;
-      color:white;
+      color:#fff;
       border:none;
       font-weight:bold;
       cursor:pointer;
     }
-
     table{
       width:100%;
       border-collapse:collapse;
       margin-top:10px;
     }
-
-    th, td{
+    th,td{
       padding:10px;
       border-bottom:1px solid #e5e7eb;
       text-align:left;
     }
-
-    .success{ color:#16a34a; font-weight:bold; }
+    .btn-danger{background:#dc2626}
+    .btn-warning{background:#f59e0b}
+    .success{color:#16a34a;font-weight:bold}
   </style>
 </head>
 
@@ -92,14 +86,26 @@
       <div>Open</div>
       <div id="openCount" class="metric">0</div>
     </div>
+
+    <div class="card">
+      <div>Close</div>
+      <div id="closeCount" class="metric">0</div>
+    </div>
+
+    <div class="card">
+      <div>MTTR (menit)</div>
+      <div id="mttr" class="metric">0</div>
+    </div>
   </div>
 
   <div class="card">
     <h3>Input Downtime</h3>
 
     <form id="reportForm">
+      <input type="hidden" id="editId">
+
       <label>Tanggal</label>
-      <input type="date" id="date" required />
+      <input type="date" id="date" required>
 
       <label>Plant</label>
       <select id="plant">
@@ -107,14 +113,24 @@
         <option>RB3</option>
       </select>
 
+      <label>Shift</label>
+      <select id="shift">
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+      </select>
+
       <label>Area</label>
-      <input id="area" placeholder="Main Machine" required />
+      <input id="area" placeholder="Main Machine" required>
 
       <label>Equipment</label>
-      <input id="equipment" placeholder="Cylinder" required />
+      <input id="equipment" placeholder="Cylinder" required>
 
       <label>Masalah</label>
       <textarea id="problem" placeholder="Jelaskan masalah" required></textarea>
+
+      <label>Downtime (menit)</label>
+      <input type="number" id="downtime" value="0" required>
 
       <label>Status Perbaikan</label>
       <select id="repair">
@@ -124,14 +140,17 @@
       </select>
 
       <label>PIC</label>
-      <input id="pic" placeholder="Rustam" required />
+      <input id="pic" placeholder="Rustam" required>
 
-      <button type="submit">Simpan</button>
+      <button type="submit" id="saveBtn">Simpan</button>
     </form>
   </div>
 
   <div class="card">
-    <h3>Data Laporan</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <h3>Data Laporan</h3>
+      <button onclick="downloadCsv()" style="width:auto;padding:8px 16px">Export CSV</button>
+    </div>
 
     <table>
       <thead>
@@ -140,11 +159,12 @@
           <th>Area</th>
           <th>Equipment</th>
           <th>Masalah</th>
+          <th>Downtime</th>
           <th>Status</th>
           <th>PIC</th>
+          <th>Aksi</th>
         </tr>
       </thead>
-
       <tbody id="reportRows"></tbody>
     </table>
   </div>
@@ -156,7 +176,10 @@
       collection,
       addDoc,
       onSnapshot,
-      serverTimestamp
+      serverTimestamp,
+      deleteDoc,
+      doc,
+      updateDoc
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     const firebaseConfig = {
@@ -172,55 +195,135 @@
     const db = getFirestore(app);
 
     document.getElementById('status').innerHTML =
-      '<span class="success">🟢 Firebase connected</span>';
+      '<span class="success">🟢 Firebase connected (HP & komputer sinkron realtime)</span>';
 
     const form = document.getElementById('reportForm');
     const rows = document.getElementById('reportRows');
+    const editId = document.getElementById('editId');
 
-    // SIMPAN DATA
+    let laporanData = [];
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const data = {
-        date: document.getElementById('date').value,
-        plant: document.getElementById('plant').value,
-        area: document.getElementById('area').value,
-        equipment: document.getElementById('equipment').value,
-        problem: document.getElementById('problem').value,
-        repair: document.getElementById('repair').value,
-        pic: document.getElementById('pic').value,
-        createdAt: serverTimestamp()
+        date: date.value,
+        plant: plant.value,
+        shift: shift.value,
+        area: area.value,
+        equipment: equipment.value,
+        problem: problem.value,
+        downtime: Number(downtime.value || 0),
+        repair: repair.value,
+        pic: pic.value,
+        updatedAt: serverTimestamp()
       };
 
-      await addDoc(collection(db, 'laporan'), data);
+      try {
+        if (editId.value) {
+          await updateDoc(doc(db, 'laporan', editId.value), data);
+          alert('Data berhasil diupdate');
+        } else {
+          data.createdAt = serverTimestamp();
+          await addDoc(collection(db, 'laporan'), data);
+          alert('Data berhasil disimpan');
+        }
 
-      alert('Data berhasil disimpan dan sinkron realtime');
-      form.reset();
+        form.reset();
+        editId.value = '';
+        saveBtn.textContent = 'Simpan';
+      } catch (err) {
+        console.error(err);
+        alert('Gagal menyimpan data');
+      }
     });
 
-    // REALTIME LISTENER
     onSnapshot(collection(db, 'laporan'), (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+      laporanData = snapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data()
       }));
 
-      document.getElementById('totalLaporan').textContent = data.length;
+      render();
+    });
 
-      document.getElementById('openCount').textContent =
-        data.filter(d => d.repair !== 'Close').length;
+    function render(){
+      document.getElementById('totalLaporan').textContent = laporanData.length;
 
-      rows.innerHTML = data.map(r => `
+      const open = laporanData.filter(r => r.repair !== 'Close').length;
+      const close = laporanData.filter(r => r.repair === 'Close').length;
+      const totalDowntime = laporanData.reduce((a,b)=>a + Number(b.downtime || 0),0);
+      const mttr = laporanData.length ? (totalDowntime / laporanData.length).toFixed(1) : 0;
+
+      document.getElementById('openCount').textContent = open;
+      document.getElementById('closeCount').textContent = close;
+      document.getElementById('mttr').textContent = mttr;
+
+      rows.innerHTML = laporanData.map(r => `
         <tr>
           <td>${r.date || ''}</td>
           <td>${r.area || ''}</td>
           <td>${r.equipment || ''}</td>
           <td>${r.problem || ''}</td>
+          <td>${r.downtime || 0}</td>
           <td>${r.repair || ''}</td>
           <td>${r.pic || ''}</td>
+          <td>
+            <button class="btn-warning" onclick="editData('${r.id}')" style="width:auto;padding:6px 10px;margin-right:6px">Edit</button>
+            <button class="btn-danger" onclick="deleteData('${r.id}')" style="width:auto;padding:6px 10px">Hapus</button>
+          </td>
         </tr>
       `).join('');
-    });
+    }
+
+    window.editData = function(id){
+      const r = laporanData.find(x => x.id === id);
+      if(!r) return;
+
+      editId.value = id;
+      date.value = r.date || '';
+      plant.value = r.plant || 'RB1';
+      shift.value = r.shift || 'A';
+      area.value = r.area || '';
+      equipment.value = r.equipment || '';
+      problem.value = r.problem || '';
+      downtime.value = r.downtime || 0;
+      repair.value = r.repair || 'Open';
+      pic.value = r.pic || '';
+
+      saveBtn.textContent = 'Update Data';
+      window.scrollTo({top:0, behavior:'smooth'});
+    };
+
+    window.deleteData = async function(id){
+      if(confirm('Hapus data ini?')){
+        await deleteDoc(doc(db, 'laporan', id));
+      }
+    };
+
+    window.downloadCsv = function(){
+      const headers = ['Tanggal','Area','Equipment','Masalah','Downtime','Status','PIC'];
+
+      const csv = [
+        headers.join(';'),
+        ...laporanData.map(r => [
+          r.date || '',
+          r.area || '',
+          r.equipment || '',
+          r.problem || '',
+          r.downtime || 0,
+          r.repair || '',
+          r.pic || ''
+        ].map(v => `"${String(v).replaceAll('"','""')}"`).join(';'))
+      ].join('\\n');
+
+      const blob = new Blob(["\\ufeff" + csv], {type:'text/csv;charset=utf-8'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'laporan-maintenance.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    };
   </script>
 
 </body>
