@@ -13,7 +13,8 @@
 body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:#eef2f7;color:#1f2937}
 .top{background:#0f4c5c;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
 .brand{display:flex;align-items:center;gap:14px}
-.logo{width:72px;height:72px;object-fit:contain;background:#fff;border-radius:14px;padding:6px;box-shadow:0 2px 10px rgba(0,0,0,.18);display:block}
+.logo-svg{width:84px;height:84px;background:#fff;border-radius:14px;padding:4px;box-shadow:0 2px 10px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center}
+.logo-svg svg{width:100%;height:100%}
 .brand h1{margin:0;font-size:32px;font-weight:800}
 .brand p{margin:4px 0 0;font-size:14px}
 .doc{font-size:12px;text-align:right}
@@ -45,14 +46,25 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
 
 <div class="top">
   <div class="brand">
-    <img class="logo" alt="RBG Logo"
-         src="https://raw.githubusercontent.com/rustamefendi010191-oss/maintenance-shift-app/main/logo-rbg.png"
-         onerror="this.src='https://raw.githubusercontent.com/rustamefendi010191-oss/maintenance-shift-app/main/7f94c04e-45f0-4dcf-a6f6-1293f1d03b90.png'">
+
+    <!-- LOGO RBG -->
+    <div class="logo-svg">
+      <svg viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg" aria-label="RBG Logo">
+        <polyline points="10,35 90,5 170,35" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="35" y1="78" x2="145" y2="78" stroke="#000" stroke-width="6" stroke-linecap="round"/>
+
+        <text x="28" y="66" font-family="Segoe UI, Arial" font-size="44" font-weight="800" fill="#7b1fa2">R</text>
+        <text x="72" y="66" font-family="Segoe UI, Arial" font-size="44" font-weight="800" fill="#2e7d32">B</text>
+        <text x="116" y="66" font-family="Segoe UI, Arial" font-size="44" font-weight="800" fill="#000">G</text>
+      </svg>
+    </div>
+
     <div>
       <h1>Aplikasi Sistem</h1>
       <p>Laporan Maintenance Shift</p>
     </div>
   </div>
+
   <div class="doc">
     <div><b>No. Dokumen:</b> FR-MRB-05</div>
     <div><b>Revisi:</b> 04 • Efektif: 01/04/2021</div>
@@ -61,6 +73,7 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
 
 <div class="wrap">
 
+  <!-- KPI -->
   <div class="kpi">
     <div class="k"><div>Total</div><b id="t">0</b></div>
     <div class="k"><div>Open</div><b id="o">0</b></div>
@@ -69,6 +82,7 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
     <div class="k"><div>MTTR</div><b id="m">0</b></div>
   </div>
 
+  <!-- FORM -->
   <div class="card">
     <h2 style="margin-top:0">Laporan permasalahan mesin</h2>
 
@@ -84,7 +98,9 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
           <label>Plant</label>
           <select id="plant" required>
             <option value=""></option>
-            <option>RB1</option><option>RB2</option><option>RB3</option>
+            <option>RB1</option>
+            <option>RB2</option>
+            <option>RB3</option>
           </select>
         </div>
 
@@ -92,7 +108,9 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
           <label>Shift</label>
           <select id="shift" required>
             <option value=""></option>
-            <option>A</option><option>B</option><option>C</option>
+            <option>A</option>
+            <option>B</option>
+            <option>C</option>
           </select>
         </div>
 
@@ -100,7 +118,9 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
           <label>Regu</label>
           <select id="regu" required>
             <option value=""></option>
-            <option>Regu 1</option><option>Regu 2</option><option>Regu 3</option>
+            <option>Regu 1</option>
+            <option>Regu 2</option>
+            <option>Regu 3</option>
           </select>
         </div>
 
@@ -128,19 +148,25 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
 
         <div>
           <label>Sub Area</label>
-          <select id="sub" required><option value=""></option></select>
+          <select id="sub" required>
+            <option value=""></option>
+          </select>
         </div>
 
         <div>
           <label>Equipment</label>
-          <select id="eq" required><option value=""></option></select>
+          <select id="eq" required>
+            <option value=""></option>
+          </select>
         </div>
 
         <div>
           <label>Status</label>
           <select id="status" required>
             <option value=""></option>
-            <option>Open</option><option>Progress</option><option>Close</option>
+            <option>Open</option>
+            <option>Progress</option>
+            <option>Close</option>
           </select>
         </div>
 
@@ -169,8 +195,10 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
     <div class="success">🟢 Firebase connected • HP dan komputer sinkron realtime</div>
   </div>
 
+  <!-- TABLE -->
   <div class="card" style="margin-top:16px">
     <h2 style="margin-top:0">Daftar laporan realtime</h2>
+
     <table>
       <thead>
         <tr>
@@ -193,13 +221,14 @@ tbody td{padding:10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
+// Firebase
 const app = initializeApp({
-  apiKey:'AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M',
-  authDomain:'maintenance-shift-app.firebaseapp.com',
-  projectId:'maintenance-shift-app',
-  storageBucket:'maintenance-shift-app.firebasestorage.app',
-  messagingSenderId:'883647677547',
-  appId:'1:883647677547:web:2191e8d1ba7faf7ea21d2e'
+  apiKey: 'AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M',
+  authDomain: 'maintenance-shift-app.firebaseapp.com',
+  projectId: 'maintenance-shift-app',
+  storageBucket: 'maintenance-shift-app.firebasestorage.app',
+  messagingSenderId: '883647677547',
+  appId: '1:883647677547:web:2191e8d1ba7faf7ea21d2e'
 });
 
 const db = getFirestore(app);
@@ -209,7 +238,7 @@ const areaTS = new TomSelect('#area',{create:false,placeholder:'Ketik untuk menc
 const subTS  = new TomSelect('#sub',{create:false,placeholder:'Ketik untuk mencari sub area...'});
 const eqTS   = new TomSelect('#eq',{create:false,placeholder:'Ketik untuk mencari equipment...'});
 
-// Mapping
+// Mapping Area -> Sub Area
 const subMap = {
   'Main Machine':['Chain Pusher','End Roll','Feeding','Stacker'],
   'Conveyor':['Infeed Conveyor','Outfeed Conveyor'],
@@ -218,6 +247,7 @@ const subMap = {
   'Utility':['Air Compressor','Cooling Tower']
 };
 
+// Mapping Sub Area -> Equipment
 const eqMap = {
   'Chain Pusher':['Chain','Sprocket','Bearing'],
   'End Roll':['Roll Shaft','Bearing'],
@@ -234,16 +264,17 @@ const eqMap = {
 };
 
 // Dynamic dropdown
-areaTS.on('change',v=>{
+areaTS.on('change', v => {
   subTS.clear(); subTS.clearOptions();
-  (subMap[v]||[]).forEach(x=>subTS.addOption({value:x,text:x}));
+  (subMap[v] || []).forEach(x => subTS.addOption({value:x,text:x}));
   subTS.refreshOptions(false);
+
   eqTS.clear(); eqTS.clearOptions();
 });
 
-subTS.on('change',v=>{
+subTS.on('change', v => {
   eqTS.clear(); eqTS.clearOptions();
-  (eqMap[v]||[]).forEach(x=>eqTS.addOption({value:x,text:x}));
+  (eqMap[v] || []).forEach(x => eqTS.addOption({value:x,text:x}));
   eqTS.refreshOptions(false);
 });
 
@@ -254,31 +285,31 @@ const d=document.getElementById('dur');
 
 function calc(){
   if(s.value && e.value){
-    d.value=Math.max(0,Math.round((new Date(e.value)-new Date(s.value))/60000));
+    d.value = Math.max(0, Math.round((new Date(e.value)-new Date(s.value))/60000));
   }
 }
-s.onchange=calc;
-e.onchange=calc;
+s.onchange = calc;
+e.onchange = calc;
 
-// Simpan realtime
-document.getElementById('f').addEventListener('submit',async ev=>{
+// Simpan data
+document.getElementById('f').addEventListener('submit', async ev => {
   ev.preventDefault();
 
   await addDoc(collection(db,'laporan'),{
-    date:date.value,
-    plant:plant.value,
-    shift:shift.value,
-    regu:regu.value,
-    start:s.value,
-    end:e.value,
-    area:areaTS.getValue(),
-    sub:subTS.getValue(),
-    equipment:eqTS.getValue(),
-    status:status.value,
-    pic:pic.value,
-    duration:Number(d.value||0),
-    problem:problem.value,
-    createdAt:serverTimestamp()
+    date: date.value,
+    plant: plant.value,
+    shift: shift.value,
+    regu: regu.value,
+    start: s.value,
+    end: e.value,
+    area: areaTS.getValue(),
+    sub: subTS.getValue(),
+    equipment: eqTS.getValue(),
+    status: status.value,
+    pic: pic.value,
+    duration: Number(d.value || 0),
+    problem: problem.value,
+    createdAt: serverTimestamp()
   });
 
   alert('Laporan berhasil disimpan');
@@ -288,10 +319,10 @@ document.getElementById('f').addEventListener('submit',async ev=>{
 });
 
 // Realtime table + KPI
-onSnapshot(collection(db,'laporan'),snap=>{
-  const data=snap.docs.map(x=>x.data());
+onSnapshot(collection(db,'laporan'), snap => {
+  const data = snap.docs.map(x => x.data());
 
-  rows.innerHTML=data.map(r=>`
+  rows.innerHTML = data.map(r => `
     <tr>
       <td>${r.date||''}</td>
       <td>${r.plant||''}</td>
@@ -303,11 +334,14 @@ onSnapshot(collection(db,'laporan'),snap=>{
     </tr>
   `).join('');
 
-  t.textContent=data.length;
-  o.textContent=data.filter(x=>x.status==='Open').length;
-  p.textContent=data.filter(x=>x.status==='Progress').length;
-  c.textContent=data.filter(x=>x.status==='Close').length;
-  m.textContent=data.length?(data.reduce((a,b)=>a+Number(b.duration||0),0)/data.length).toFixed(1):0;
+  t.textContent = data.length;
+  o.textContent = data.filter(x=>x.status==='Open').length;
+  p.textContent = data.filter(x=>x.status==='Progress').length;
+  c.textContent = data.filter(x=>x.status==='Close').length;
+
+  m.textContent = data.length
+    ? (data.reduce((a,b)=>a+Number(b.duration||0),0)/data.length).toFixed(1)
+    : 0;
 });
 </script>
 
