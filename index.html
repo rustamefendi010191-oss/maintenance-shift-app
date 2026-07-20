@@ -5,204 +5,432 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aplikasi Sistem - Maintenance Shift</title>
 
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
 <style>
+*{box-sizing:border-box}
 body{
   margin:0;
-  font-family:'Segoe UI', Arial, sans-serif;
+  font-family:'Segoe UI',Arial,sans-serif;
   background:#eef2f7;
+  color:#1f2937;
 }
-
 .topbar{
   background:#0f4c5c;
-  color:white;
+  color:#fff;
   padding:10px 16px;
   display:flex;
+  align-items:center;
   justify-content:space-between;
-  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
 }
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
+.brand{display:flex;align-items:center;gap:12px}
 .logo{
-  width:42px;
-  height:42px;
-  border-radius:10px;
-  background:white;
-  color:#0f4c5c;
-  font-weight:800;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  width:44px;height:44px;border-radius:10px;
+  background:#fff;color:#0f4c5c;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
 }
-
-.container{
-  padding:18px;
+.brand h1{margin:0;font-size:26px}
+.brand p{margin:2px 0 0;font-size:13px}
+.docinfo{text-align:right;font-size:12px}
+.logout{
+  background:#08313b;color:#fff;border:1px solid rgba(255,255,255,.35);
+  border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;
 }
-
-.tabs{
-  display:flex;
-  gap:10px;
-  margin-bottom:16px;
-}
-
+.container{padding:16px}
+.tabs{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
 .tab{
-  background:#d7dee8;
-  border:none;
-  border-radius:10px;
-  padding:10px 16px;
-  font-weight:700;
+  background:#cfd8e3;border:none;border-radius:10px;
+  padding:10px 16px;font-weight:700;cursor:pointer;
 }
-
-.tab.active{
-  background:#0f4c5c;
-  color:white;
-}
-
+.tab.active{background:#0f4c5c;color:#fff}
 .card{
-  background:white;
-  border-radius:16px;
-  padding:18px;
+  background:#fff;border-radius:16px;padding:16px;
   box-shadow:0 6px 18px rgba(15,23,42,.08);
 }
-
+.kpi-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:12px;margin-bottom:16px;
+}
+.kpi{
+  background:#0f172a;color:#fff;border-radius:14px;padding:14px;
+}
+.kpi .label{font-size:13px;opacity:.85}
+.kpi .value{font-size:32px;font-weight:800;margin-top:6px}
 .form-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
 }
-
-.field label{
-  display:block;
-  font-size:13px;
-  font-weight:700;
-  margin-bottom:6px;
+@media (max-width:900px){.form-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column}
+.field label{font-size:13px;font-weight:700;margin-bottom:6px;color:#334155}
+input,select,textarea{
+  width:100%;padding:11px 12px;border:1px solid #cbd5e1;
+  border-radius:10px;font-size:14px;background:#fff;
 }
-
-input, select{
-  width:100%;
-  padding:11px 12px;
-  border:1px solid #cbd5e1;
-  border-radius:10px;
-  box-sizing:border-box;
+textarea{min-height:88px;resize:vertical}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.btn{
+  border:none;border-radius:10px;padding:11px 16px;
+  font-weight:700;cursor:pointer;
+}
+.btn-primary{background:#2563eb;color:#fff}
+.btn-secondary{background:#475569;color:#fff}
+.btn-danger{background:#dc2626;color:#fff}
+.btn-warning{background:#f59e0b;color:#fff}
+.toolbar{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;flex-wrap:wrap;margin-bottom:10px;
+}
+table{width:100%;border-collapse:collapse;background:#fff}
+thead th{
+  background:#0f4c5c;color:#fff;padding:12px;font-size:13px;
+}
+tbody td{
+  padding:12px;border-bottom:1px solid #e5e7eb;vertical-align:top;
+}
+.status{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;
+}
+.open{background:#fee2e2;color:#b91c1c}
+.progress{background:#fef3c7;color:#92400e}
+.close{background:#dcfce7;color:#166534}
+.hidden{display:none}
+.success{color:#16a34a;font-weight:700}
+.section-title{
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;margin-bottom:10px;
+}
+.section-body.collapsed{display:none}
+.ts-control{
+  min-height:44px;border-radius:10px !important;
+  border:1px solid #cbd5e1 !important;
 }
 </style>
 </head>
-
-<body>
-
-<header class="topbar">
+  <header class="topbar">
   <div class="brand">
     <div class="logo">RBG</div>
     <div>
-      <div style="font-size:28px;font-weight:800">Aplikasi Sistem</div>
-      <div style="font-size:13px">Laporan Maintenance Shift</div>
+      <h1>Aplikasi Sistem</h1>
+      <p>Laporan Maintenance Shift</p>
     </div>
   </div>
 
-  <div style="text-align:right;font-size:12px">
-    <div><b>No. Dokumen:</b> FR-MRB-05</div>
-    <div><b>Revisi:</b> 04 • Efektif: 01/04/2021</div>
+  <div class="docinfo">
+    <div><strong>No. Dokumen:</strong> FR-MRB-05</div>
+    <div><strong>Revisi:</strong> 04 • Efektif: 01/04/2021</div>
   </div>
 
-  <button style="background:#08313b;color:white;border:1px solid rgba(255,255,255,.4);border-radius:10px;padding:10px 14px;font-weight:700">
-    Keluar
-  </button>
+  <button class="logout">Keluar</button>
 </header>
 
 <main class="container">
 
   <div class="tabs">
-    <button class="tab">Dashboard</button>
-    <button class="tab active">Input laporan</button>
-    <button class="tab">Daftar laporan</button>
+    <button class="tab active" data-tab="dashboard">Dashboard</button>
+    <button class="tab" data-tab="input">Input laporan</button>
+    <button class="tab" data-tab="list">Daftar laporan</button>
   </div>
 
-  <section class="card">
-    <h2 style="margin-top:0;color:#0f172a">Laporan permasalahan mesin</h2>
-
-    <div class="form-grid">
-      <div class="field">
-        <label>Tanggal kejadian *</label>
-        <input type="date">
-      </div>
-
-      <div class="field">
-        <label>Plant *</label>
-        <select><option>Pilih plant</option></select>
-      </div>
-
-      <div class="field">
-        <label>Waktu shift *</label>
-        <select><option>Pilih shift</option></select>
-      </div>
-
-      <div class="field">
-        <label>Regu *</label>
-        <select><option>Pilih regu</option></select>
-      </div>
-
-      <div class="field">
-        <label>Mulai dikerjakan *</label>
-        <input type="datetime-local">
-      </div>
-
-      <div class="field">
-        <label>Selesai dikerjakan</label>
-        <input type="datetime-local">
-      </div>
-
-      <div class="field">
-        <label>Status mesin *</label>
-        <select><option>Pilih status</option></select>
-      </div>
-
-      <div class="field">
-        <label>Area *</label>
-        <select><option>Pilih area</option></select>
-      </div>
-
-      <div class="field">
-        <label>Sub area *</label>
-        <select><option>Pilih sub area</option></select>
-      </div>
-
-      <div class="field">
-        <label>Equipment *</label>
-        <select><option>Pilih equipment</option></select>
-      </div>
-
-      <div class="field">
-        <label>Status kejadian *</label>
-        <select><option>Pilih status</option></select>
-      </div>
-
-      <div class="field">
-        <label>Status perbaikan *</label>
-        <select><option>Pilih status</option></select>
-      </div>
-
-      <div class="field">
-        <label>PIC eksekusi *</label>
-        <input placeholder="Nama PIC">
-      </div>
-
-      <div class="field">
-        <label>Foto after perbaikan</label>
-        <input type="file">
-      </div>
-
-      <div class="field">
-        <label>Durasi</label>
-        <input placeholder="Otomatis dari waktu mulai/selesai">
-      </div>
+  <section id="dashboard" class="card">
+    <div class="kpi-grid">
+      <div class="kpi"><div class="label">Total laporan</div><div id="kpiTotal" class="value">0</div></div>
+      <div class="kpi"><div class="label">Open</div><div id="kpiOpen" class="value">0</div></div>
+      <div class="kpi"><div class="label">Progress</div><div id="kpiProgress" class="value">0</div></div>
+      <div class="kpi"><div class="label">Close</div><div id="kpiClose" class="value">0</div></div>
+      <div class="kpi"><div class="label">MTTR (menit)</div><div id="kpiMttr" class="value">0</div></div>
     </div>
+    <div class="success">🟢 Firebase connected • HP dan komputer sinkron realtime</div>
   </section>
+  <section id="input" class="card hidden">
+  <div class="section-title" onclick="toggleForm()">
+    <h2 style="margin:0">Laporan permasalahan mesin</h2>
+    <span id="toggleIcon">🔽</span>
+  </div>
+
+  <div class="section-body" id="formBody">
+    <form id="reportForm">
+      <input type="hidden" id="editId">
+
+      <div class="form-grid">
+        <div class="field">
+          <label>Tanggal kejadian *</label>
+          <input type="date" id="date" required>
+        </div>
+
+        <div class="field">
+          <label>Plant *</label>
+          <select id="plant" required>
+            <option value="">Pilih plant</option>
+            <option>RB1</option>
+            <option>RB2</option>
+            <option>RB3</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Waktu shift *</label>
+          <select id="shift" required>
+            <option value="">Pilih shift</option>
+            <option>A</option>
+            <option>B</option>
+            <option>C</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Regu *</label>
+          <select id="regu" required>
+            <option value="">Pilih regu</option>
+            <option>Regu 1</option>
+            <option>Regu 2</option>
+            <option>Regu 3</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Mulai dikerjakan *</label>
+          <input type="datetime-local" id="startTime" required>
+        </div>
+
+        <div class="field">
+          <label>Selesai dikerjakan</label>
+          <input type="datetime-local" id="endTime">
+        </div>
+
+        <div class="field">
+          <label>Area *</label>
+          <select id="area" required>
+            <option value="">Cari area...</option>
+            <option>Main Machine</option>
+            <option>Conveyor</option>
+            <option>Hydraulic</option>
+            <option>Pneumatic</option>
+            <option>Utility</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Sub area *</label>
+          <select id="subArea" required>
+            <option value="">Cari sub area...</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Equipment *</label>
+          <select id="equipment" required>
+            <option value="">Cari equipment...</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Status perbaikan *</label>
+          <select id="repair" required>
+            <option value="">Pilih status</option>
+            <option>Open</option>
+            <option>Progress</option>
+            <option>Close</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>PIC eksekusi *</label>
+          <input id="pic" placeholder="Nama PIC" required>
+        </div>
+
+        <div class="field">
+          <label>Durasi (menit)</label>
+          <input id="duration" readonly placeholder="Otomatis dari waktu mulai/selesai">
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:12px">
+        <label>Deskripsi masalah *</label>
+        <textarea id="problem" required placeholder="Jelaskan masalah dan tindakan perbaikan"></textarea>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" type="submit">💾 Simpan laporan</button>
+      </div>
+    </form>
+  </div>
+</section>
+  <section id="list" class="card hidden">
+  <div class="toolbar">
+    <h2 style="margin:0">Daftar laporan realtime</h2>
+    <button class="btn btn-secondary" id="exportBtn">📥 Export CSV</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Tanggal</th>
+        <th>Plant</th>
+        <th>Shift</th>
+        <th>Area</th>
+        <th>Equipment</th>
+        <th>Durasi</th>
+        <th>Status</th>
+        <th>PIC</th>
+      </tr>
+    </thead>
+    <tbody id="reportRows"></tbody>
+  </table>
+</section>
 
 </main>
 
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyA107reAeDVJI78Yg94E7gJBYpbTHNUo6M',
+  authDomain: 'maintenance-shift-app.firebaseapp.com',
+  projectId: 'maintenance-shift-app',
+  storageBucket: 'maintenance-shift-app.firebasestorage.app',
+  messagingSenderId: '883647677547',
+  appId: '1:883647677547:web:2191e8d1ba7faf7ea21d2e'
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Tabs
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    ['dashboard','input','list'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+    document.getElementById(tab.dataset.tab).classList.remove('hidden');
+  };
+});
+
+// Search dropdown
+new TomSelect('#area',{create:false});
+new TomSelect('#subArea',{create:false});
+new TomSelect('#equipment',{create:false});
+
+// Dynamic dropdown
+const subMap={
+  'Main Machine':['Chain Pusher','End Roll','Feeding','Stacker'],
+  'Conveyor':['Infeed Conveyor','Outfeed Conveyor'],
+  'Hydraulic':['Hydraulic Power Unit','Hydraulic Valve'],
+  'Pneumatic':['Air Cylinder','Solenoid Valve'],
+  'Utility':['Air Compressor','Cooling Tower']
+};
+
+const eqMap={
+  'Chain Pusher':['Chain','Sprocket','Bearing'],
+  'End Roll':['Roll Shaft','Bearing'],
+  'Feeding':['Motor','Gearbox','Sensor'],
+  'Stacker':['Lift Cylinder','Limit Switch']
+};
+
+const area=document.getElementById('area');
+const sub=document.getElementById('subArea');
+const eq=document.getElementById('equipment');
+
+area.addEventListener('change',()=>{
+  sub.tomselect.clear();
+  sub.tomselect.clearOptions();
+  (subMap[area.value]||[]).forEach(v=>sub.tomselect.addOption({value:v,text:v}));
+  sub.tomselect.refreshOptions(false);
+});
+
+sub.addEventListener('change',()=>{
+  eq.tomselect.clear();
+  eq.tomselect.clearOptions();
+  (eqMap[sub.value]||[]).forEach(v=>eq.tomselect.addOption({value:v,text:v}));
+  eq.tomselect.refreshOptions(false);
+});
+
+// Durasi otomatis
+const start=document.getElementById('startTime');
+const end=document.getElementById('endTime');
+const duration=document.getElementById('duration');
+
+function calcDuration(){
+  if(start.value && end.value){
+    const m=Math.max(0,Math.round((new Date(end.value)-new Date(start.value))/60000));
+    duration.value=m;
+  }
+}
+start.onchange=calcDuration;
+end.onchange=calcDuration;
+
+// Simpan realtime
+const form=document.getElementById('reportForm');
+
+form.addEventListener('submit',async e=>{
+  e.preventDefault();
+
+  const data={
+    date:date.value,
+    plant:plant.value,
+    shift:shift.value,
+    regu:regu.value,
+    startTime:start.value,
+    endTime:end.value,
+    area:area.value,
+    subArea:sub.value,
+    equipment:eq.value,
+    repair:repair.value,
+    pic:pic.value,
+    duration:Number(duration.value||0),
+    problem:problem.value,
+    createdAt:serverTimestamp()
+  };
+
+  await addDoc(collection(db,'laporan'),data);
+  alert('Laporan berhasil disimpan');
+  form.reset();
+});
+
+// Realtime table
+onSnapshot(collection(db,'laporan'),snap=>{
+  const rows=document.getElementById('reportRows');
+  const data=snap.docs.map(d=>d.data());
+
+  rows.innerHTML=data.map(r=>`
+    <tr>
+      <td>${r.date||''}</td>
+      <td>${r.plant||''}</td>
+      <td>${r.shift||''}</td>
+      <td>${r.area||''}</td>
+      <td>${r.equipment||''}</td>
+      <td>${r.duration||0} menit</td>
+      <td><span class="status ${r.repair==='Close'?'close':r.repair==='Progress'?'progress':'open'}">${r.repair||'Open'}</span></td>
+      <td>${r.pic||''}</td>
+    </tr>
+  `).join('');
+
+  const total=data.length;
+  const open=data.filter(r=>r.repair==='Open').length;
+  const progress=data.filter(r=>r.repair==='Progress').length;
+  const close=data.filter(r=>r.repair==='Close').length;
+  const mttr=total?(data.reduce((a,b)=>a+Number(b.duration||0),0)/total).toFixed(1):0;
+
+  kpiTotal.textContent=total;
+  kpiOpen.textContent=open;
+  kpiProgress.textContent=progress;
+  kpiClose.textContent=close;
+  kpiMttr.textContent=mttr;
+});
+
+// Collapse form
+window.toggleForm=()=>{
+  const body=document.getElementById('formBody');
+  const icon=document.getElementById('toggleIcon');
+  body.classList.toggle('collapsed');
+  icon.textContent=body.classList.contains('collapsed')?'▶️':'🔽';
+};
+</script>
+
 </body>
 </html>
+<body>
